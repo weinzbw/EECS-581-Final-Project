@@ -1,3 +1,17 @@
+"""
+Program Name: main.py
+Description: Provide a launch screen for the game
+Programmer(s): Ben Weinzirl
+Date Made: 10/22/2024
+Date(s) Revised:
+Preconditions:
+Postconditions:
+Errors/Exceptions:
+Side Effects:
+Invariants:
+Known Faults:
+"""
+
 import pygame
 import sys
 

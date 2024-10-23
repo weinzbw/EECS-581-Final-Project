@@ -16,6 +16,10 @@
 
 * Initialized Github and created sample title screen
 
+10/23/24 - 1h
+
+* Added header comments. Added helper.py for environments
+
 ---
 
 **Del Endecott**
