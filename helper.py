@@ -3,13 +3,13 @@ Program Name: helper.py
 Description: Provide helper functions for PyGame objects on each screen.
 Programmer(s): Ben Weinzirl
 Date Made: 10/23/2024
-Date(s) Revised:
-Preconditions:
-Postconditions:
-Errors/Exceptions:
-Side Effects:
-Invariants:
-Known Faults:
+Date(s) Revised: 10/26/2024: Updated header comment
+Preconditions: Does not involve input or output
+Postconditions: No differing return values
+Errors/Exceptions: No intended errors/exceptions
+Side Effects: Updates objects within a room (separate file)
+Invariants: An object has a unique action when clicked on
+Known Faults: N/A
 """
 
 import pygame

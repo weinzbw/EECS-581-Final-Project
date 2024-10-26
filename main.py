@@ -3,24 +3,25 @@ Program Name: main.py
 Description: Provide a launch screen for the game
 Programmer(s): Ben Weinzirl
 Date Made: 10/22/2024
-Date(s) Revised:
-Preconditions:
-Postconditions:
-Errors/Exceptions:
-Side Effects:
-Invariants:
-Known Faults:
+Date(s) Revised: 10/26/2024: Added correct button functionality, setup for savedata, and updated header comment
+Preconditions: No inputs or outputs
+Postconditions: No differing return values
+Errors/Exceptions: No intended errors/exceptions
+Side Effects: Creates a data.txt file that stores the save data of the user
+Invariants: Start Game button loads into a new save. Load game buttons loads a previous save.
+Known Faults: N/A
 """
 
 import pygame
 import sys
+import os
+import front
 
-# Initialize Pygame
 pygame.init()
 
 # Set up the display
 screen = pygame.display.set_mode((800, 600))
-pygame.display.set_caption("Pygame Button Example")
+pygame.display.set_caption("Inconvenient Escape")
 
 # Define colors
 WHITE = (255, 255, 255)
@@ -59,8 +60,17 @@ def draw_button(text, x, y, width, height, inactive_color, active_color, action=
     screen.blit(button_text, (x + (width // 2 - button_text.get_width() // 2), y + (height // 2 - button_text.get_height() // 2)))
 
 # Define the action function to be triggered when the button is clicked
-def button_action():
-    print("Button clicked!")
+def front_room():
+    front.front()
+
+def load_save():
+    file_path = "data.txt"
+
+    if os.path.exists(file_path):
+        print("File exists")
+    else:
+        front_room()
+# Initialize Pygame
 
 def start():
     screen.fill(WHITE)
@@ -69,8 +79,8 @@ while True:
     screen.fill(WHITE)
 
     # Draw the button (text, x, y, width, height, inactive color, active color, action)
-    draw_button("Start Game", 300, 150, 200, 50, GRAY, DARK_GRAY, button_action)
-    draw_button("Load Game", 300, 250, 200, 50, GRAY, DARK_GRAY, button_action)
+    draw_button("Start Game", 300, 150, 200, 50, GRAY, DARK_GRAY, front_room)
+    draw_button("Load Game", 300, 250, 200, 50, GRAY, DARK_GRAY, load_save)
 
     # Event handling
     for event in pygame.event.get():
