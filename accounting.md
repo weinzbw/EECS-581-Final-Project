@@ -18,6 +18,10 @@ Ben Weinzirl
 
 * Added header comments. Added helper.py for environments
 
+10/27/24 - 3h
+
+* Combined all previous work, fixed errors in code, updated stack requirements, ensured all code was up to the rubric's standard
+
 ---
 
 Del Endecott

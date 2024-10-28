@@ -8,7 +8,7 @@ Postconditions: No differing return values
 Errors/Exceptions: No intended errors/exceptions
 Side Effects: None
 Invariants: None
-Known Faults: N/A
+Known Faults: Hitbox for clicks is off. Need different background
 """
 
 import pygame
