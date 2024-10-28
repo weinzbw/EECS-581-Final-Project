@@ -1,8 +1,8 @@
 """
 Program Name: front_room.py
-Description: Provide the front view of the room. Currently a template with placeholder image and object interaction.
+Description: Provide the back view of the room. Currently a template with placeholder image and object interaction.
 Programmer(s): Naran Bat
-Date Made: 10/26/2024
+Date Made: 10/27/2024
 Date(s) Revised: 10/27/2024: Added placeholder image and object interaction
 Preconditions: Requires a JPEG image located in the same directory as the program.
 Postconditions: A graphical window displaying the room background with interactive objects. Users can hover and click on objects to see visual feedback
@@ -21,10 +21,10 @@ pygame.init()
 # Set up the display
 WIDTH, HEIGHT = 800, 600
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption("Front View")
+pygame.display.set_caption("Back View")
 
 # Load room image
-room_image = pygame.image.load("place_holder_front.jpeg") 
+room_image = pygame.image.load("place_holder_back.jpeg") 
 room_image = pygame.transform.scale(room_image, (WIDTH, HEIGHT))
 
 # Define font
@@ -33,10 +33,8 @@ interaction_text = ""
 
 # Define objects
 objects = {
-    "monitor": pygame.Rect(100, 250, 100, 100),
-    "printer": pygame.Rect(400, 200, 100, 100),
-    "shredder": pygame.Rect(330, 410, 60, 90),
-    "safe": pygame.Rect(600, 250, 100, 100)
+    "stove": pygame.Rect(180, 260, 120, 250),
+    "sink": pygame.Rect(460, 300, 120, 100),
 }
 
 # Colors
