@@ -12,7 +12,7 @@ Ben Weinzirl
 
 10/22/24 - 1h
 
-* Initialized Github and created sample title screen
+* Initialized Github and created a sample title screen
 
 10/23/24 - 1h
 
@@ -21,6 +21,14 @@ Ben Weinzirl
 ---
 
 Del Endecott
+
+10/26/24 - 3h
+
+* Worked on the requirements artifacts for sprint 2
+
+10/27/24 - 2h
+
+* Created placeholder art for screens
 
 ---
 
@@ -39,6 +47,10 @@ Sam Harrison
 ---
 
 Mick Torres
+
+10/27/24 - 2h
+
+* Created left and right screens
 
 ---
 
