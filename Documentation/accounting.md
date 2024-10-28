@@ -42,6 +42,13 @@
 
 **Naran Bat**
 
+10/26/24 - 1h
+
+* Initial scene and basic functionality 
+
+10/27/24 - 1h
+
+* Added placeholder image and intractability 
 
 
 ---
