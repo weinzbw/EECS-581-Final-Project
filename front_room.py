@@ -1,3 +1,17 @@
+"""
+Program Name: front_room.py
+Description: Provide the front view of the room. Currently a template with placeholder image and object interaction.
+Programmer(s): Naran Bat
+Date Made: 10/26/2024
+Date(s) Revised: 10/27/2024: Added placeholder image and object interaction
+Preconditions: Requires a JPEG image located in the same directory as the program.
+Postconditions: A graphical window displaying the room background with interactive objects. Users can hover and click on objects to see visual feedback
+Errors/Exceptions: No intended errors/exceptions
+Side Effects: Opens a graphical Pygame window that requires user input to close.
+Invariants: The screen dimensions are constant at 800x600 pixels. Interactive object areas are fixed and defined as rectangles within the room.
+Known Faults:
+"""
+
 import pygame
 import sys
 
