@@ -3,13 +3,13 @@
 # This is a (potentially temporary) main file. Its goal is to run the whole game loop of the beginning room. In this version, you can complete a few tasks. You can print an uno reverse card, unlock the computer, beat chess, and get the crowbar from the drawer.
 # Name: Sam Harrison
 # Creation Date: 10/26/24
-# Revision Date: N/A
+# Revision Date: 11/5/24 - Temporarily added to front for testing, updated for savegame file
 # Preconditions: The only inputs are the arrow keys and mouse clicks. These are used to interact with the world. Also, I opens the inventory, and T shows the task list.
 # Postconditions: The only values returned are visual. That could be an item going in your inventory or something moving in game.
 # Error & Exceptions: There are none so far.
 # Side Effects: inventory, is_computer_view, computer_unlocked, chess_completed, pawn_tile_x, pawn_tile_y
 # Invariants: chess movement boundaries, tasks, drawer state
-# Faults: None are known so far.
+# Faults: Does not save and load items to inventory properly
 import pygame
 import sys
 import time
@@ -95,8 +95,23 @@ tasks = Tasks(font_size=24, tasks=["Unlock the computer", "Collect the crowbar",
 # sets current game states
 in_computer_view = False
 computer_unlocked = False
-chess_completed = False  
-inventory = []  
+chess_completed = False
+inventory = []
+with open("../savedata.txt", "r") as save:
+    savestate = save.read().splitlines()
+    print(savestate)
+    try:
+        computer_unlocked = int(savestate[0])
+        chess_completed = int(savestate[1])
+        for item in savestate[2]:
+            inventory.append(item)
+    except:
+        savestate = [0, 0]
+
+with open("../savedata.txt", "w") as save:
+    save.write("0\n")
+    save.write("0\n")
+
 inventory_visible = False 
 item_popup_time = None  
 
@@ -134,6 +149,7 @@ while running:
                     if right_arrow_count >= 36:
                         tasks.complete_task("Unlock the computer")
                         computer_unlocked = True # changed from game states above
+                        savestate[0]="1"
                         tasks.add_task("Beat Chess")  # gives the player this task, as chess is now visible
             # lets the chess board's pawn be controlled when the task is available; it makes sure it doesnt go out of bounds as well
             elif computer_unlocked and not chess_completed:
@@ -155,7 +171,8 @@ while running:
                 # checks for the pawn reaching the black king; when it's done, it's complete
                 if pawn_tile_x == 4 and pawn_tile_y == 0:
                     in_computer_view = False  # closes computer view, so the player can see the drawer opening
-                    chess_completed = True  
+                    chess_completed = True 
+                    savestate[1] = "1"
                     tasks.complete_task("Beat Chess") 
 
         # used when the drawer is open; when it is, checks if your mouse is over it and you click; then it gives you the items in the drawer, completing the task
@@ -233,5 +250,11 @@ while running:
         item_popup_time = None
         
     pygame.display.flip() # updates the display
-    
+with open("../savedata.txt", "w") as save:
+    print(savestate)
+    for line in savestate:
+        print(str(line))
+        save.write(str(line) + "\n")
+    for item in inventory:
+        save.write(str(f"{item}\t"))
 pygame.quit()

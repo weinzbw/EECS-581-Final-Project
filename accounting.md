@@ -22,6 +22,10 @@ Ben Weinzirl
 
 * Combined all previous work, fixed errors in code, updated stack requirements, ensured all code was up to the rubric's standard
 
+11/5/24 - 3h
+
+* Created savedata for tasks, needs further improvement. Addded connections from mainscreen to front room, still a problem connecting front to tasks
+
 ---
 
 Del Endecott

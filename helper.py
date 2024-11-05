@@ -51,9 +51,6 @@ class GameObject:
 
     def handle_click(self):
         pass
-    
-    def draw(self, surface):
-        surface.blit(self.image, (self.x, self.y))
 
 """
 Example of adding subclasses to the GameObject class to specialize handle_click():

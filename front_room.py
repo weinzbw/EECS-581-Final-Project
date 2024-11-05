@@ -3,7 +3,9 @@ Program Name: front_room.py
 Description: Provide the front view of the room. Currently a template with placeholder image and object interaction.
 Programmer(s): Naran Bat
 Date Made: 10/26/2024
-Date(s) Revised: 10/27/2024: Added placeholder image and object interaction
+Date(s) Revised:
+10/27/2024: Added placeholder image and object interaction
+11/5/2024: Made a main function for connecting to other screens
 Preconditions: Requires a JPEG image located in the same directory as the program.
 Postconditions: A graphical window displaying the room background with interactive objects. Users can hover and click on objects to see visual feedback
 Errors/Exceptions: No intended errors/exceptions
@@ -14,7 +16,7 @@ Known Faults:
 
 import pygame
 import sys
-
+from Sam.main import computer
 
 pygame.init()
 
@@ -29,7 +31,6 @@ room_image = pygame.transform.scale(room_image, (WIDTH, HEIGHT))
 
 # Define font
 font = pygame.font.SysFont(None, 36)
-interaction_text = ""
 
 # Define objects
 objects = {
@@ -50,43 +51,48 @@ def draw_transparent_overlay(rect, color):
     screen.blit(overlay, rect.topleft)
 
 # Main loop
-clock = pygame.time.Clock()
-running = True
-while running:
-    # Clear the screen
-    screen.blit(room_image, (0, 0))
+def front():
+    interaction_text = ""
+    clock = pygame.time.Clock()
+    running = True
+    while running:
+        # Clear the screen
+        screen.blit(room_image, (0, 0))
 
-    # Get mouse position
-    mouse_pos = pygame.mouse.get_pos()
+        # Get mouse position
+        mouse_pos = pygame.mouse.get_pos()
 
-    # Draw objects
-    for obj_name, obj_rect in objects.items():
-        if obj_rect.collidepoint(mouse_pos):
-            # Highlight object when hovering
-            draw_transparent_overlay(obj_rect, HIGHLIGHT_COLOR + (100,))  
-            interaction_text = f"You are hovering over the {obj_name}."
-        else:
-            # Transparent object when not hovering
-            draw_transparent_overlay(obj_rect, TRANSPARENT_COLOR)
+        # Draw objects
+        for obj_name, obj_rect in objects.items():
+            if obj_rect.collidepoint(mouse_pos):
+                # Highlight object when hovering
+                draw_transparent_overlay(obj_rect, HIGHLIGHT_COLOR + (100,))  
+                interaction_text = f"You are hovering over the {obj_name}."
+            else:
+                # Transparent object when not hovering
+                draw_transparent_overlay(obj_rect, TRANSPARENT_COLOR)
 
-    # Event handling
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
-        elif event.type == pygame.MOUSEBUTTONDOWN:
-            # Check if player clicked on an object
-            for obj_name, obj_rect in objects.items():
-                if obj_rect.collidepoint(mouse_pos):
-                    interaction_text = f"You clicked on the {obj_name}."
+        # Event handling
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                # Check if player clicked on an object
+                for obj_name, obj_rect in objects.items():
+                    if obj_rect.collidepoint(mouse_pos):
+                        # CHANGE THIS FOR helper.py handle_click() AFTER ADDING OBJECTS TO ROOM CLASS
+                        interaction_text = f"You clicked on the {obj_name}."
+                        if obj_name == "monitor":
+                            computer()
 
-    # Display text
-    text_surface = font.render(interaction_text, True, (0, 0, 0))
-    screen.blit(text_surface, (20, 20))
+        # Display text
+        text_surface = font.render(interaction_text, True, (0, 0, 0))
+        screen.blit(text_surface, (20, 20))
 
-    # Update display
-    pygame.display.flip()
-    clock.tick(30) # Cap the frame rate
+        # Update display
+        pygame.display.flip()
+        clock.tick(30) # Cap the frame rate
 
-# Quit Pygame
-pygame.quit()
-sys.exit()
+    # Quit Pygame
+    pygame.quit()
+    sys.exit()
