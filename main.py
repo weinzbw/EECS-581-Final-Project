@@ -3,7 +3,9 @@ Program Name: main.py
 Description: Provide a launch screen for the game
 Programmer(s): Ben Weinzirl
 Date Made: 10/22/2024
-Date(s) Revised: 10/26/2024: Added correct button functionality, setup for savedata, and updated header comment
+Date(s) Revised:
+10/26/2024: Added correct button functionality, setup for savedata, and updated header comment
+10/27/2024: Added title
 Preconditions: No inputs or outputs
 Postconditions: No differing return values
 Errors/Exceptions: No intended errors/exceptions
@@ -15,7 +17,7 @@ Known Faults: N/A
 import pygame
 import sys
 import os
-import front
+#import front
 
 pygame.init()
 
@@ -61,31 +63,41 @@ def draw_button(text, x, y, width, height, inactive_color, active_color, action=
 
 # Define the action function to be triggered when the button is clicked
 def front_room():
-    front.front()
-
+    #front.front()
+    pass
 def load_save():
     file_path = "data.txt"
 
     if os.path.exists(file_path):
         print("File exists")
     else:
-        front_room()
+        #front_room()
+        pass
 # Initialize Pygame
 
 def start():
     screen.fill(WHITE)
 # Run the game loop
-while True:
-    screen.fill(WHITE)
+    text = font.render('INCONVENIENT ESCAPE', True, BLACK)
 
-    # Draw the button (text, x, y, width, height, inactive color, active color, action)
-    draw_button("Start Game", 300, 150, 200, 50, GRAY, DARK_GRAY, front_room)
-    draw_button("Load Game", 300, 250, 200, 50, GRAY, DARK_GRAY, load_save)
+    textRect = text.get_rect()
 
-    # Event handling
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            pygame.quit()
-            sys.exit()
+    textRect.center = (400, 50)
 
-    pygame.display.update()
+    while True:
+        screen.fill(WHITE)
+
+        screen.blit(text, textRect)
+        # Draw the button (text, x, y, width, height, inactive color, active color, action)
+        draw_button("Start Game", 300, 150, 200, 50, GRAY, DARK_GRAY, front_room)
+        draw_button("Load Game", 300, 250, 200, 50, GRAY, DARK_GRAY, load_save)
+
+        # Event handling
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+
+        pygame.display.update()
+
+start()
