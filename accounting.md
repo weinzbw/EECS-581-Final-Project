@@ -26,6 +26,10 @@ Ben Weinzirl
 
 * Created savedata for tasks, needs further improvement. Addded connections from mainscreen to front room, still a problem connecting front to tasks
 
+11/7/24 - 2.5h
+
+* Worked more on savedata and connecting screens, still does not save items properly
+
 ---
 
 Del Endecott

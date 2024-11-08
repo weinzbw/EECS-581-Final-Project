@@ -16,7 +16,7 @@ Known Faults:
 
 import pygame
 import sys
-from Sam.main import computer
+from main import computer
 
 pygame.init()
 

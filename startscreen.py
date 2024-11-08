@@ -1,5 +1,5 @@
 """
-Program Name: main.py
+Program Name: startscreen.py
 Description: Provide a launch screen for the game
 Programmer(s): Ben Weinzirl
 Date Made: 10/22/2024
@@ -7,6 +7,7 @@ Date(s) Revised:
 10/26/2024: Added correct button functionality, setup for savedata, and updated header comment
 10/27/2024: Added title
 11/5/2024: Connects to front
+11/7/2024: Properly loads and deletes saves
 Preconditions: No inputs or outputs
 Postconditions: No differing return values
 Errors/Exceptions: No intended errors/exceptions
@@ -62,14 +63,21 @@ def draw_button(text, x, y, width, height, inactive_color, active_color, action=
     button_text = font.render(text, True, BLACK)
     screen.blit(button_text, (x + (width // 2 - button_text.get_width() // 2), y + (height // 2 - button_text.get_height() // 2)))
 
-# Define the action function to be triggered when the button is clicked
+def start_game():
+    file_path = "savedata.txt"
+
+    if os.path.exists(file_path):
+        open(file_path, "w").close()
+    
+    front()
 def load_save():
-    file_path = "data.txt"
+    file_path = "savedata.txt"
 
     if os.path.exists(file_path):
         print("File exists")
+        front()
     else:
-        front
+        front()
         pass
 # Initialize Pygame
 
@@ -87,7 +95,7 @@ def start():
 
         screen.blit(text, textRect)
         # Draw the button (text, x, y, width, height, inactive color, active color, action)
-        draw_button("Start Game", 300, 150, 200, 50, GRAY, DARK_GRAY, front)
+        draw_button("Start Game", 300, 150, 200, 50, GRAY, DARK_GRAY, start_game)
         draw_button("Load Game", 300, 250, 200, 50, GRAY, DARK_GRAY, load_save)
 
         # Event handling
