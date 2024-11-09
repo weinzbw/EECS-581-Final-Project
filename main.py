@@ -98,6 +98,7 @@ in_computer_view = False
 computer_unlocked = False
 chess_completed = False
 inventory = []
+state = []
 with open("savedata.txt", "r") as save:
     savestate = save.read().splitlines()
     print(savestate)
@@ -106,7 +107,11 @@ with open("savedata.txt", "r") as save:
         computer_unlocked = int(savestate[0])
         chess_completed = int(savestate[1])
         while i < len(savestate):
-            inventory.append(savestate[i])
+            if savestate[i] in inventory:
+                i = i
+            else:
+                inventory.append(str(savestate[i]))
+                state.append(str(savestate[i]))
             i += 1
     except:
         savestate = [0, 0]
@@ -136,6 +141,7 @@ def computer():
     global right_arrow_count
     global pawn_tile_x
     global pawn_tile_y
+    global state
 
     running = True
     while running:
@@ -265,11 +271,15 @@ def computer():
             item_popup_time = None
         
         pygame.display.flip() # updates the display
+
     with open("savedata.txt", "w") as save:
-        print(savestate)
+        print(state)
         for line in savestate:
-            print(str(line))
             save.write(str(line) + "\n")
         for item in inventory:
-            save.write(str(f"{item}\n"))
+            if item in state:
+                print("hello")
+            else:
+                save.write(str(f"{item}\n"))
+                state.append(item)
     pygame.quit()
