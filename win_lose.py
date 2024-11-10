@@ -36,7 +36,7 @@ class GameTimer:
 
 class GameState:
     def __init__(self):
-        self.timer = GameTimer(60)  # 1-hour timer
+        self.timer = GameTimer(3600)  # 1-hour timer
         self.door_unlocked = False
 
     def unlock_door(self):

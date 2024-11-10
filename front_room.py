@@ -37,10 +37,9 @@ interaction_time = 0
 
 # Define objects
 objects = {
-    "monitor": pygame.Rect(100, 250, 100, 100),
-    "printer": pygame.Rect(400, 200, 100, 100),
-    "shredder": pygame.Rect(330, 410, 60, 90),
-    "safe": pygame.Rect(600, 250, 100, 100)
+    "computer": pygame.Rect(120, 260, 100, 100),
+    "printer": pygame.Rect(500, 280, 180, 110),
+    
 }
 
 # Colors
@@ -98,7 +97,7 @@ while running:
                     interaction_text = f"You clicked on the {obj_name}."
                     interaction_time = time.time()
                     # If the monitor is clicked, unlock the door (win condition)
-                    if obj_name == "monitor":
+                    if obj_name == "computer":
                         game_state.unlock_door()  # Set win state
 
     # Check if interaction text should be cleared after 2 seconds
