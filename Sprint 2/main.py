@@ -15,12 +15,18 @@ import pygame
 import sys
 import time
 from tasks import Tasks
+from helper import load_sound, GameObject
 
 # this block initializes Pygame, as well as making the window (made with the help of ChatGPT)
 pygame.init()
 window_width, window_height = 640, 480
 window = pygame.display.set_mode((window_width, window_height))
 pygame.display.set_caption("Escape Room")
+
+# load the sounds
+computer_sound = load_sound("computer.mp3")
+drawer_sound = load_sound("drawer.mp3")
+printer_sound = load_sound("printer.mp3")
 
 # this block loads the background image; it is scaled to match the increased window size
 room_image = pygame.image.load("Images/temp_room.png")
@@ -30,15 +36,18 @@ scaled_room_image = pygame.transform.scale(room_image, (window_width, window_hei
 computer_image = pygame.image.load("Images/computer_object.png")
 computer_image = pygame.transform.scale(computer_image, (128, 72))
 computer_position = (400, 300)
+computer_object = GameObject(computer_position[0], computer_position[1], computer_image, sound=computer_sound)
 
 # this block loads the drawer images and sets their location; it is scaled to match the increased window size
 drawer_closed_image = pygame.image.load("Images/drawer_closed.png")
 drawer_opened_image = pygame.image.load("Images/drawer_opened.png")
 drawer_position = (50, computer_position[1])
+drawer_object = GameObject(drawer_position[0], drawer_position[1], drawer_closed_image, sound=drawer_sound)
 
 # this block loads the printer image and sets its location; it is scaled to match the increased window size; I was lazy, so the printer is positioned between the two via their own variables (made with the help of ChatGPT)
 printer_image = pygame.image.load("Images/printer.png")
 printer_position = (drawer_position[0] + 150, computer_position[1])  # Position the printer between drawer and computer
+printer_object = GameObject(printer_position[0], printer_position[1], printer_image, sound=printer_sound)
 
 # this loads the computer screen itself
 computer_view_image = pygame.image.load("Images/computer_view.png")
@@ -199,8 +208,15 @@ def computer():
             # used when the drawer is open; when it is, checks if your mouse is over it and you click; then it gives you the items in the drawer, completing the task
             elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 mouse_x, mouse_y = pygame.mouse.get_pos()
+
+                # play computer sound if clicked
+                if computer_object.rect.collidepoint(mouse_x, mouse_y):
+                    computer_object.handle_click()
+                    in_computer_view = True
+                 
                 drawer_rect = drawer_opened_image.get_rect(topleft=drawer_position)
                 if chess_completed and drawer_rect.collidepoint(mouse_x, mouse_y) and "This Thing" not in inventory:
+                    drawer_object.handle_click() # play drawer sound if clicked and unlocked
                     inventory.append("This Thing")
                     inventory.append("Extremely Small Crowbar")
                     tasks.complete_task("Collect the crowbar") 
@@ -209,6 +225,7 @@ def computer():
                 # checks if the printer is clicked; if not, you can get the uno reverse card and complete this task
                 printer_rect = printer_image.get_rect(topleft=printer_position)
                 if printer_rect.collidepoint(mouse_x, mouse_y) and "Uno Reverse Card" not in inventory:
+                    printer_object.handle_click()  # play printer sound if clicked
                     inventory.append("Uno Reverse Card")
                     tasks.complete_task("Print") 
                     item_popup_time = time.time() 
