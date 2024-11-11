@@ -28,43 +28,43 @@ drawer_sound = load_sound("drawer.mp3")
 printer_sound = load_sound("printer.mp3")
 
 # this block loads the background image; it is scaled to match the increased window size
-room_image = pygame.image.load("temp_room.png")
+room_image = pygame.image.load("Images/temp_room.png")
 scaled_room_image = pygame.transform.scale(room_image, (window_width, window_height))
 
 # this block loads the computer image and sets its location; it is scaled to match the increased window size
-computer_image = pygame.image.load("computer_object.png")
+computer_image = pygame.image.load("Images/computer_object.png")
 computer_image = pygame.transform.scale(computer_image, (128, 72))
 computer_position = (400, 300)
 computer_object = GameObject(computer_position[0], computer_position[1], computer_image, sound=computer_sound)
 
 # this block loads the drawer images and sets their location; it is scaled to match the increased window size
-drawer_closed_image = pygame.image.load("drawer_closed.png")
-drawer_opened_image = pygame.image.load("drawer_opened.png")
+drawer_closed_image = pygame.image.load("Images/drawer_closed.png")
+drawer_opened_image = pygame.image.load("Images/drawer_opened.png")
 drawer_position = (50, computer_position[1])
 drawer_object = GameObject(drawer_position[0], drawer_position[1], drawer_closed_image, sound=drawer_sound)
 
 # this block loads the printer image and sets its location; it is scaled to match the increased window size; I was lazy, so the printer is positioned between the two via their own variables (made with the help of ChatGPT)
-printer_image = pygame.image.load("printer.png")
+printer_image = pygame.image.load("Images/printer.png")
 printer_position = (drawer_position[0] + 150, computer_position[1])  # Position the printer between drawer and computer
 printer_object = GameObject(printer_position[0], printer_position[1], printer_image, sound=printer_sound)
 
 # this loads the computer screen itself
-computer_view_image = pygame.image.load("computer_view.png")
+computer_view_image = pygame.image.load("Images/computer_view.png")
 scaled_computer_view_image = pygame.transform.scale(computer_view_image, (window_width, window_height))
 
 # this loads the progress bar in the middle of the screen of the computer
-fakebar_image = pygame.image.load("fakebar1.png")
+fakebar_image = pygame.image.load("Images/fakebar1.png")
 fakebar_position = ((window_width - 200) // 2, (window_height - 75) // 2)
 
 # this loads the little bar that will be used later on the progress bar window
-fakebar_progress_image = pygame.image.load("fakebar2.png")
+fakebar_progress_image = pygame.image.load("Images/fakebar2.png")
 
 # this loads chess and its pieces
-chess_board_image = pygame.image.load("chess_board.png")
+chess_board_image = pygame.image.load("Images/chess_board.png")
 chess_board_rect = chess_board_image.get_rect(center=(window_width // 2, window_height // 2))
-black_king_image = pygame.image.load("black_king.png")
-white_king_image = pygame.image.load("white_king.png")
-white_pawn_image = pygame.image.load("white_pawn.png")
+black_king_image = pygame.image.load("Images/black_king.png")
+white_king_image = pygame.image.load("Images/white_king.png")
+white_pawn_image = pygame.image.load("Images/white_pawn.png")
 
 # this is the chessboard tile size with the positioning of pieces
 tile_size = 21
