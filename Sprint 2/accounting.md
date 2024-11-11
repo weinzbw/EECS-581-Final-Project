@@ -30,6 +30,14 @@ Ben Weinzirl
 
 * Worked more on savedata and connecting screens, still does not save items properly
 
+11/9/24 - 1h
+
+* Finally fixed saving in main.py
+
+11/10/24 - 1h
+
+* Combined everyone's work and submitted
+
 ---
 
 Del Endecott
@@ -41,6 +49,11 @@ Del Endecott
 10/27/24 - 2h
 
 * Created placeholder art for screens
+
+11/10/24 - 6.5h
+
+* Creating art for the game (6h)
+* Creating Sprint 3 Requirements Artifacts (0.5h)
 
 ---
 
@@ -56,6 +69,8 @@ Sam Harrison
 
 10/27 9:00 AM - worked on task.py, main.py, and made a lot of assets (5 hrs)
 
+11/10 - Added sounds to helper.py function and converted objects in room to GameObjects according to helper.py
+
 ---
 
 Mick Torres
@@ -63,6 +78,14 @@ Mick Torres
 10/27/24 - 2h
 
 * Created left and right screens
+
+11/6/24 - 1h
+
+* Initialized options menu
+
+11/10/24 - 2h
+
+* Implemented options menu into main.py along with adding time played to savedata
 
 ---
 
@@ -75,3 +98,11 @@ Naran Bat
 10/27/24 - 1h
 
 * Added placeholder image and intractability
+
+11/6/24 - 1h
+
+* Added timer capabilities to the game
+
+11/10/24 - 1h
+
+* Added win/fail conditions and screens
