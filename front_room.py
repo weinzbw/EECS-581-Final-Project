@@ -6,6 +6,7 @@ Date Made: 10/26/2024
 Date(s) Revised:
 10/27/2024: Added placeholder image and object interaction
 11/5/2024: Made a main function for connecting to other screens
+11/10/2024: Added win_lose conditions
 Preconditions: Requires a JPEG image located in the same directory as the program.
 Postconditions: A graphical window displaying the room background with interactive objects. Users can hover and click on objects to see visual feedback
 Errors/Exceptions: No intended errors/exceptions
@@ -14,9 +15,13 @@ Invariants: The screen dimensions are constant at 800x600 pixels. Interactive ob
 Known Faults:
 """
 
+
 import pygame
 import sys
-from main import computer
+import win_lose
+import time
+import main
+
 
 pygame.init()
 
@@ -26,23 +31,27 @@ screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Front View")
 
 # Load room image
-room_image = pygame.image.load("place_holder_front.jpeg") 
+room_image = pygame.image.load("front_room.jpeg") 
 room_image = pygame.transform.scale(room_image, (WIDTH, HEIGHT))
 
 # Define font
 font = pygame.font.SysFont(None, 36)
+interaction_text = ""
+interaction_time = 0
 
 # Define objects
 objects = {
-    "monitor": pygame.Rect(100, 250, 100, 100),
-    "printer": pygame.Rect(400, 200, 100, 100),
-    "shredder": pygame.Rect(330, 410, 60, 90),
-    "safe": pygame.Rect(600, 250, 100, 100)
+    "computer": pygame.Rect(120, 260, 100, 100),
+    "printer": pygame.Rect(500, 280, 180, 110),
+    
 }
 
 # Colors
 HIGHLIGHT_COLOR = (255, 255, 0)
 TRANSPARENT_COLOR = (0, 0, 255, 100)
+
+# Initialize game state
+game_state = win_lose.GameState() # 1-hour timer and locked door initially
 
 # Function to draw a transparent overlay on a rectangle
 def draw_transparent_overlay(rect, color):
@@ -51,48 +60,67 @@ def draw_transparent_overlay(rect, color):
     screen.blit(overlay, rect.topleft)
 
 # Main loop
-def front():
-    interaction_text = ""
-    clock = pygame.time.Clock()
-    running = True
-    while running:
-        # Clear the screen
-        screen.blit(room_image, (0, 0))
+clock = pygame.time.Clock()
+running = True
+while running:
+    # Check win/fail conditions
+    status = game_state.update()
+    if status == "win":
+        win_lose.display_win_screen(screen)
+        running = False
+    elif status == "fail":
+        win_lose.display_fail_screen(screen)
+        running = False
 
-        # Get mouse position
-        mouse_pos = pygame.mouse.get_pos()
+    # Clear the screen and display room image
+    screen.blit(room_image, (0, 0))
 
-        # Draw objects
-        for obj_name, obj_rect in objects.items():
-            if obj_rect.collidepoint(mouse_pos):
-                # Highlight object when hovering
-                draw_transparent_overlay(obj_rect, HIGHLIGHT_COLOR + (100,))  
-                interaction_text = f"You are hovering over the {obj_name}."
-            else:
-                # Transparent object when not hovering
-                draw_transparent_overlay(obj_rect, TRANSPARENT_COLOR)
+    # Get mouse position
+    mouse_pos = pygame.mouse.get_pos()
 
-        # Event handling
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                running = False
-            elif event.type == pygame.MOUSEBUTTONDOWN:
-                # Check if player clicked on an object
-                for obj_name, obj_rect in objects.items():
-                    if obj_rect.collidepoint(mouse_pos):
-                        # CHANGE THIS FOR helper.py handle_click() AFTER ADDING OBJECTS TO ROOM CLASS
-                        interaction_text = f"You clicked on the {obj_name}."
-                        if obj_name == "monitor":
-                            computer()
+    # Draw objects with hover effects
+    for obj_name, obj_rect in objects.items():
+        if obj_rect.collidepoint(mouse_pos):
+            # Highlight object when hovering
+            draw_transparent_overlay(obj_rect, HIGHLIGHT_COLOR + (100,))
+            interaction_text = f"You are hovering over the {obj_name}."
+            interaction_time = time.time()
+        else:
+            # Transparent overlay when not hovering
+            draw_transparent_overlay(obj_rect, TRANSPARENT_COLOR)
 
-        # Display text
-        text_surface = font.render(interaction_text, True, (0, 0, 0))
-        screen.blit(text_surface, (20, 20))
+    # Event handling
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            pygame.quit()
+            sys.exit()
+        elif event.type == pygame.MOUSEBUTTONDOWN:
+            # Check if player clicked on an object
+            for obj_name, obj_rect in objects.items():
+                if obj_rect.collidepoint(mouse_pos):
+                    interaction_text = f"You clicked on the {obj_name}."
+                    interaction_time = time.time()
+                    # If the monitor is clicked, unlock the door (win condition)
+                    if obj_name == "computer":
+                        main.computer()  # Set win state
+                    if obj_name == "printer":
+                        game_state.unlock_door() # Set win state
 
-        # Update display
-        pygame.display.flip()
-        clock.tick(30) # Cap the frame rate
+    # Check if interaction text should be cleared after 2 seconds
+    if time.time() - interaction_time > 2:
+        interaction_text = ""
+    # Display interaction text
+    text_surface = font.render(interaction_text, True, (0, 0, 0))
+    text_rect = text_surface.get_rect(center=(WIDTH // 2, HEIGHT - 30))
+    screen.blit(text_surface, text_rect)
 
-    # Quit Pygame
-    pygame.quit()
-    sys.exit()
+    # Display the countdown timer
+    win_lose.display_timer(screen, game_state.timer)
+
+    # Update display and control frame rate
+    pygame.display.flip()
+    clock.tick(30)  # Cap the frame rate
+
+# Quit Pygame when loop ends
+pygame.quit()
+sys.exit()
