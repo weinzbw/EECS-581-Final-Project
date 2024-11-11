@@ -5,6 +5,7 @@
 # Creation Date: 10/26/24
 # Revision Date(s): 11/5/24 - Temporarily added to front for testing, updated for savegame file
 #                   11/7/24 - Added connection to front room, updated saving
+#                   11/9/24 - Finally fixed saving to and from inventory
 # Preconditions: The only inputs are the arrow keys and mouse clicks. These are used to interact with the world. Also, I opens the inventory, and T shows the task list.
 # Postconditions: The only values returned are visual. That could be an item going in your inventory or something moving in game.
 # Error & Exceptions: There are none so far.
