@@ -8,6 +8,7 @@ Date(s) Revised:
 10/27/2024: Added title
 11/5/2024: Connects to front
 11/7/2024: Properly loads and deletes saves
+11/16/2024: Scales button placement to window size
 Preconditions: No inputs or outputs
 Postconditions: No differing return values
 Errors/Exceptions: No intended errors/exceptions
@@ -21,6 +22,7 @@ import sys
 import os
 from front_room import front
 
+pygame.font.init()
 pygame.init()
 
 # Set up the display
@@ -83,7 +85,7 @@ def load_save():
 
 def start():
     screen.fill(WHITE)
-# Run the game loop
+
     text = font.render('INCONVENIENT ESCAPE', True, BLACK)
 
     textRect = text.get_rect()
@@ -95,8 +97,14 @@ def start():
 
         screen.blit(text, textRect)
         # Draw the button (text, x, y, width, height, inactive color, active color, action)
-        draw_button("Start Game", 300, 150, 200, 50, GRAY, DARK_GRAY, start_game)
-        draw_button("Load Game", 300, 250, 200, 50, GRAY, DARK_GRAY, load_save)
+        screen_width, screen_height = screen.get_size()
+        button_width, button_height = 200, 50
+
+        start_button_y = screen_height // 3
+        load_button_y = start_button_y + button_height + 20
+
+        draw_button("Start Game", (screen_width - button_width) // 2, start_button_y, button_width, button_height, GRAY, DARK_GRAY, start_game)
+        draw_button("Load Game", (screen_width - button_width) // 2, load_button_y, button_width, button_height, GRAY, DARK_GRAY, load_save)
 
         # Event handling
         for event in pygame.event.get():

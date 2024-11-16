@@ -16,6 +16,8 @@ import pygame
 import sys
 import time
 
+pygame.init()
+
 class GameTimer:
     def __init__(self, duration):
         self.start_time = time.time()

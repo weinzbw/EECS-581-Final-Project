@@ -38,6 +38,10 @@ Ben Weinzirl
 
 * Combined everyone's work and submitted
 
+11/16/24 - 2.5h
+
+* Initialized sprint 3, fixe sprint 2 bugs, refactored some code to avoid using "global"
+
 ---
 
 Del Endecott

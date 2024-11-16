@@ -5,17 +5,18 @@
 # Creation Date: 10/26/24
 # Revision Date(s): 11/5/24 - Temporarily added to front for testing, updated for savegame file
 #                   11/7/24 - Added connection to front room, updated saving
+#                   11/16/24 - Added Sam's sounds. got rid of the "global" usage, refactored loading a save
 # Preconditions: The only inputs are the arrow keys and mouse clicks. These are used to interact with the world. Also, I opens the inventory, and T shows the task list.
 # Postconditions: The only values returned are visual. That could be an item going in your inventory or something moving in game.
 # Error & Exceptions: There are none so far.
 # Side Effects: inventory, is_computer_view, computer_unlocked, chess_completed, pawn_tile_x, pawn_tile_y
 # Invariants: chess movement boundaries, tasks, drawer state
-# Faults: Does not save and load items to inventory properly
+# Faults:
 import pygame
 import sys
 import time
 from tasks import Tasks
-from helper import load_sound, GameObject
+from helper import handle_save, load_sound, GameObject
 
 # this block initializes Pygame, as well as making the window (made with the help of ChatGPT)
 pygame.init()
@@ -24,9 +25,9 @@ window = pygame.display.set_mode((window_width, window_height))
 pygame.display.set_caption("Escape Room")
 
 # load the sounds
-computer_sound = load_sound("computer.mp3")
-drawer_sound = load_sound("drawer.mp3")
-printer_sound = load_sound("printer.mp3")
+computer_sound = load_sound("sounds/computer.mp3")
+drawer_sound = load_sound("sounds/drawer.mp3")
+printer_sound = load_sound("sounds/printer.mp3")
 
 # this block loads the background image; it is scaled to match the increased window size
 room_image = pygame.image.load("Images/temp_room.png")
@@ -93,64 +94,43 @@ piece_positions = {
     "white_pawn": (tile_positions["E4"][0] + piece_offsets["white_pawn"][0], tile_positions["E4"][1] + piece_offsets["white_pawn"][1])
 }
 
-# block of variables for the progress bar; it starts at the pixel of the top-left corner of the progress bar
-progress_start_x = fakebar_position[0] + 44
-progress_start_y = fakebar_position[1] + 32
-progress_x_offset = 0
-right_arrow_count = 0
+
 
 # starts list of tasks
 tasks = Tasks(font_size=24, tasks=["Unlock the computer", "Collect the crowbar", "Print"])
-
-# sets current game states
-in_computer_view = False
-computer_unlocked = False
-chess_completed = False
-inventory = []
-state = []
-with open("savedata.txt", "r") as save:
-    savestate = save.read().splitlines()
-    print(savestate)
-    try:
-        i = 2
-        computer_unlocked = int(savestate[0])
-        chess_completed = int(savestate[1])
-        while i < len(savestate):
-            if savestate[i] in inventory:
-                i = i
-            else:
-                inventory.append(str(savestate[i]))
-                state.append(str(savestate[i]))
-            i += 1
-    except:
-        savestate = [0, 0]
-
-with open("savedata.txt", "w") as save:
-    save.write(f"{savestate[0]}\n")
-    save.write(f"{savestate[1]}\n")
-
-inventory_visible = False 
-item_popup_time = None  
-
-# tracks pawns positioning
-pawn_tile_x, pawn_tile_y = 4, 4  
 
 # font loaded
 font = pygame.font.SysFont("Courier New", 24)
 
 # main game loop
 def computer():
-    global in_computer_view
-    global inventory_visible
-    global item_popup_time
-    global inventory
-    global chess_completed
-    global computer_unlocked
-    global progress_x_offset
-    global right_arrow_count
-    global pawn_tile_x
-    global pawn_tile_y
-    global state
+
+    # sets current game states
+    savestate = handle_save("savedata.txt")
+    print(savestate)
+    computer_unlocked = int(savestate[0])
+    chess_completed = int(savestate[1])
+    state = []
+    inventory = []
+    i = 2
+    while i < len(savestate):
+        if savestate[i] not in inventory:
+            inventory.append(str(savestate[i]))
+            state.append(str(savestate[i]))
+        i += 1
+
+    in_computer_view = False
+    inventory_visible = False 
+    item_popup_time = None  
+
+    # block of variables for the progress bar; it starts at the pixel of the top-left corner of the progress bar
+    progress_start_x = fakebar_position[0] + 44
+    progress_start_y = fakebar_position[1] + 32
+    progress_x_offset = 0
+    right_arrow_count = 0
+
+    # tracks pawns positioning
+    pawn_tile_x, pawn_tile_y = 4, 4  
 
     running = True
     while running:
@@ -290,13 +270,11 @@ def computer():
         pygame.display.flip() # updates the display
 
     with open("savedata.txt", "w") as save:
-        print(state)
         for line in savestate:
             save.write(str(line) + "\n")
         for item in inventory:
-            if item in state:
-                print("hello")
-            else:
+            if item not in state:
                 save.write(str(f"{item}\n"))
                 state.append(item)
+
     pygame.quit()
