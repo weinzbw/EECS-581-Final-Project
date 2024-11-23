@@ -1,9 +1,11 @@
 """
 Program Name: helper.py
 Description: Provide helper functions for PyGame objects on each screen.
-Programmer(s): Ben Weinzirl
+Programmer(s): Ben Weinzirl, Sam Harrison
 Date Made: 10/23/2024
-Date(s) Revised: 10/26/2024: Updated header comment
+Date(s) Revised:
+10/26/2024: Updated header comment
+11/16/2024: Updated for Sam's portion which added sounds to objects. Added handle_save()
 Preconditions: Does not involve input or output
 Postconditions: No differing return values
 Errors/Exceptions: No intended errors/exceptions
@@ -14,6 +16,93 @@ Known Faults: N/A
 
 import pygame
 import sys
+
+pygame.mixer.init()  # ADDED
+
+def handle_save(path):
+    with open(path, "r") as save:
+        savestate = save.read().splitlines()
+        try:
+            savestate[0]
+            savestate[1]
+        except:
+            savestate = [0, 0]
+
+    with open(path, "w") as save:
+        save.write(f"{savestate[0]}\n")
+        save.write(f"{savestate[1]}\n")
+    
+    return savestate
+
+def load_save(path):
+    try:
+        with open(path, "r") as save:
+            savestate = save.read().splitlines()
+            if len(savestate) < 2:
+                return [0, 0]
+            return [int(value) if value.isdigit() else value for value in savestate]
+    except FileNotFoundError:
+        # If the file doesn't exist, initialize a new save state
+        return [0, 0]
+
+
+def save_state(path, savestate):
+    with open(path, "w") as save:
+        for line in savestate:
+            save.write(f"{line}\n")
+
+
+def reset_save(path):
+    with open(path, "w") as save:
+        save.write("0\n0\n")
+
+
+def pause_menu(window, font, save_path, savestate):
+    """Displays the pause menu and handles interactions using helper functions."""
+    running = True
+    menu_items = ["Load Save", "Delete Save", "Save and Exit"]
+    selected_index = 0
+
+    while running:
+        # Draw menu background
+        window.fill((0, 0, 0))  # Black background
+        title_text = font.render("Pause Menu", True, (255, 255, 255))
+        window.blit(title_text, (window.get_width() // 2 - title_text.get_width() // 2, 50))
+
+        # Draw menu items
+        for i, item in enumerate(menu_items):
+            color = (255, 255, 0) if i == selected_index else (255, 255, 255)
+            item_text = font.render(item, True, color)
+            window.blit(item_text, (window.get_width() // 2 - item_text.get_width() // 2, 150 + i * 50))
+
+        pygame.display.flip()
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_UP:
+                    selected_index = (selected_index - 1) % len(menu_items)
+                elif event.key == pygame.K_DOWN:
+                    selected_index = (selected_index + 1) % len(menu_items)
+                elif event.key == pygame.K_RETURN:
+                    # Handle menu selection
+                    if menu_items[selected_index] == "Load Save":
+                        savestate[:] = load_save(save_path)  # Reload the savestate
+                        running = False
+                    elif menu_items[selected_index] == "Delete Save":
+                        reset_save(save_path)  # Reset save data
+                        savestate[:] = [0, 0]  # Reset current state
+                        running = False
+                    elif menu_items[selected_index] == "Save and Exit":
+                        save_state(save_path, savestate)  # Save current state
+                        pygame.quit()
+                        sys.exit()
+                elif event.key == pygame.K_ESCAPE:
+                    running = False  # Exit the pause menu
+
 
 class Room:
     def __init__(self):
@@ -38,22 +127,31 @@ class Room:
                 obj.handle_click()
 
 class GameObject:
-    def __init__(self, x, y, image):
+    def __init__(self, x, y, image, sound=None):
         self.x = x
         self.y = y
         self.image = image
         self.rect = self.image.get_rect()
         self.rect.x = self.x
         self.rect.y = self.y
+        self.sound = sound  # ADDED
     
     def update(self):
         pass
 
     def handle_click(self):
-        pass
-    
+        if self.sound:
+            self.sound.play()  # ADDED
+
     def draw(self, surface):
         surface.blit(self.image, (self.x, self.y))
+
+    def load_sound(file_path):  # ADDED
+        try:
+            return pygame.mixer.Sound(file_path)  # ADDED
+        except pygame.error as e:  # ADDED
+            print(f"Failed to load sound: {file_path}, Error: {e}")  # ADDED
+            return None  # ADDED
 
 """
 Example of adding subclasses to the GameObject class to specialize handle_click():
