@@ -42,6 +42,10 @@ Ben Weinzirl
 
 * Initialized sprint 3, fixe sprint 2 bugs, refactored some code to avoid using "global"
 
+11/23/24 - 1.5h
+
+* Added Computer from main.py to frontroom.py and added save handling to startscreen to be passed to the game
+
 ---
 
 Del Endecott

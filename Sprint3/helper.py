@@ -17,7 +17,7 @@ Known Faults: N/A
 import pygame
 import sys
 
-pygame.mixer.init()  # ADDED
+#pygame.mixer.init()  # ADDED
 
 def handle_save(path):
     with open(path, "r") as save:

@@ -16,7 +16,7 @@ import pygame
 import sys
 import time
 from tasks import Tasks
-from helper import handle_save, load_sound, GameObject
+from helper import handle_save, GameObject
 
 # this block initializes Pygame, as well as making the window (made with the help of ChatGPT)
 pygame.init()
@@ -25,9 +25,9 @@ window = pygame.display.set_mode((window_width, window_height))
 pygame.display.set_caption("Escape Room")
 
 # load the sounds
-computer_sound = load_sound("sounds/computer.mp3")
-drawer_sound = load_sound("sounds/drawer.mp3")
-printer_sound = load_sound("sounds/printer.mp3")
+#computer_sound = load_sound("sounds/computer.mp3")
+#drawer_sound = load_sound("sounds/drawer.mp3")
+#printer_sound = load_sound("sounds/printer.mp3")
 
 # this block loads the background image; it is scaled to match the increased window size
 room_image = pygame.image.load("Images/temp_room.png")
@@ -37,18 +37,18 @@ scaled_room_image = pygame.transform.scale(room_image, (window_width, window_hei
 computer_image = pygame.image.load("Images/computer_object.png")
 computer_image = pygame.transform.scale(computer_image, (128, 72))
 computer_position = (400, 300)
-computer_object = GameObject(computer_position[0], computer_position[1], computer_image, sound=computer_sound)
+computer_object = GameObject(computer_position[0], computer_position[1], computer_image)
 
 # this block loads the drawer images and sets their location; it is scaled to match the increased window size
 drawer_closed_image = pygame.image.load("Images/drawer_closed.png")
 drawer_opened_image = pygame.image.load("Images/drawer_opened.png")
 drawer_position = (50, computer_position[1])
-drawer_object = GameObject(drawer_position[0], drawer_position[1], drawer_closed_image, sound=drawer_sound)
+drawer_object = GameObject(drawer_position[0], drawer_position[1], drawer_closed_image)
 
 # this block loads the printer image and sets its location; it is scaled to match the increased window size; I was lazy, so the printer is positioned between the two via their own variables (made with the help of ChatGPT)
 printer_image = pygame.image.load("Images/printer.png")
 printer_position = (drawer_position[0] + 150, computer_position[1])  # Position the printer between drawer and computer
-printer_object = GameObject(printer_position[0], printer_position[1], printer_image, sound=printer_sound)
+printer_object = GameObject(printer_position[0], printer_position[1], printer_image)
 
 # this loads the computer screen itself
 computer_view_image = pygame.image.load("Images/computer_view.png")

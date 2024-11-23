@@ -1,13 +1,14 @@
 """
 Program Name: front_room.py
 Description: Provide the front view of the room. Currently a template with placeholder image and object interaction.
-Programmer(s): Naran Bat
+Programmer(s): Naran Bat, Sam Harrison, Ben Weinzirl
 Date Made: 10/26/2024
 Date(s) Revised:
 10/27/2024: Added placeholder image and object interaction
 11/5/2024: Made a main function for connecting to other screens
 11/10/2024: Added win_lose conditions
 11/16/2024: Avoided using "global" for interaction_time
+11/23/2024: Added the computer from Sam's main.py to this screen to avoid using temp room. More will need to be done for full integration.
 Preconditions: Requires a JPEG image located in the same directory as the program.
 Postconditions: A graphical window displaying the room background with interactive objects. Users can hover and click on objects to see visual feedback
 Errors/Exceptions: No intended errors/exceptions
@@ -53,14 +54,130 @@ TRANSPARENT_COLOR = (0, 0, 255, 100)
 # Initialize game state
 game_state = win_lose.GameState() # 1-hour timer and locked door initially
 
+# this loads the computer screen itself
+computer_view_image = pygame.image.load("Images/computer_view.png")
+scaled_computer_view_image = pygame.transform.scale(computer_view_image, (WIDTH, HEIGHT))
+
+# this loads the progress bar in the middle of the screen of the computer
+fakebar_image = pygame.image.load("Images/fakebar1.png")
+fakebar_position = ((WIDTH - 200) // 2, (HEIGHT - 75) // 2)
+
+# this loads the little bar that will be used later on the progress bar window
+fakebar_progress_image = pygame.image.load("Images/fakebar2.png")
+
+# this loads chess and its pieces
+chess_board_image = pygame.image.load("Images/chess_board.png")
+chess_board_rect = chess_board_image.get_rect(center=(WIDTH // 2, HEIGHT // 2))
+black_king_image = pygame.image.load("Images/black_king.png")
+white_king_image = pygame.image.load("Images/white_king.png")
+white_pawn_image = pygame.image.load("Images/white_pawn.png")
+
+# this is the chessboard tile size with the positioning of pieces
+tile_size = 21
+board_offset_x = chess_board_rect.left + 16
+board_offset_y = chess_board_rect.top + 41
+
+# uses defined board size to offset the pieces to be on the tiles
+tile_positions = {
+    "E8": (board_offset_x + 4 * tile_size, board_offset_y + 0 * tile_size),  # black king
+    "A3": (board_offset_x + 0 * tile_size, board_offset_y + 5 * tile_size),  # white king
+    "E4": (board_offset_x + 4 * tile_size, board_offset_y + 4 * tile_size)   # white pawn
+}
+
+# does more for centering the pieces
+piece_offsets = {
+    "black_king": ((tile_size - black_king_image.get_width()) // 2, (tile_size - black_king_image.get_height()) // 2),
+    "white_king": ((tile_size - white_king_image.get_width()) // 2, (tile_size - white_king_image.get_height()) // 2),
+    "white_pawn": ((tile_size - white_pawn_image.get_width()) // 2, (tile_size - white_pawn_image.get_height()) // 2)
+}
+
+# does more for centering the pieces
+piece_positions = {
+    "black_king": (tile_positions["E8"][0] + piece_offsets["black_king"][0], tile_positions["E8"][1] + piece_offsets["black_king"][1]),
+    "white_king": (tile_positions["A3"][0] + piece_offsets["white_king"][0], tile_positions["A3"][1] + piece_offsets["white_king"][1]),
+    "white_pawn": (tile_positions["E4"][0] + piece_offsets["white_pawn"][0], tile_positions["E4"][1] + piece_offsets["white_pawn"][1])
+}
+
+
+
 # Function to draw a transparent overlay on a rectangle
 def draw_transparent_overlay(rect, color):
     overlay = pygame.Surface((rect.width, rect.height), pygame.SRCALPHA) 
     overlay.fill(color)
     screen.blit(overlay, rect.topleft)
 
+def computer(savestate, computer_unlocked, chess_completed):
+    # block of variables for the progress bar; it starts at the pixel of the top-left corner of the progress bar
+    progress_start_x = fakebar_position[0] + 44
+    progress_start_y = fakebar_position[1] + 32
+    progress_x_offset = 0
+    right_arrow_count = 0
+
+    # tracks pawns positioning
+    pawn_tile_x, pawn_tile_y = 4, 4  
+
+    running = True
+    while running:
+        screen.blit(scaled_computer_view_image, (0, 0))
+
+        # displays the loading bar until you unlock the computer; it needs to be removed when the task is complete
+        if not computer_unlocked:
+            screen.blit(fakebar_image, fakebar_position)
+            for i in range(0, progress_x_offset, 4):
+                segment_x = progress_start_x + i
+                screen.blit(fakebar_progress_image, (segment_x, progress_start_y))
+        # display the chess board until you beat chess; it needs to be removed when the task is complete
+        elif not chess_completed:
+            screen.blit(chess_board_image, chess_board_rect.topleft)
+            screen.blit(black_king_image, piece_positions["black_king"])
+            screen.blit(white_king_image, piece_positions["white_king"])
+            screen.blit(white_pawn_image, piece_positions["white_pawn"])
+        for event in pygame.event.get():
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_RIGHT and not computer_unlocked:
+                    # when available, it'll let you add a bar when pressing right arrow key
+                    if progress_x_offset < 200 - 44:
+                        progress_x_offset += 4
+                        right_arrow_count += 1
+                        if right_arrow_count >= 36:
+                            main.tasks.complete_task("Unlock the computer")
+                            computer_unlocked = True # changed from game states above
+                            savestate[0]="1"
+                            main.tasks.add_task("Beat Chess")  # gives the player this task, as chess is now visible
+                elif event.key == pygame.K_ESCAPE:
+                    return savestate
+                # lets the chess board's pawn be controlled when the task is available; it makes sure it doesnt go out of bounds as well
+                elif computer_unlocked and not chess_completed:
+                    if event.type == pygame.KEYDOWN:
+                        if event.key == pygame.K_UP and pawn_tile_y > 0:
+                            pawn_tile_y -= 1
+                        elif event.key == pygame.K_DOWN and pawn_tile_y < 7:
+                            pawn_tile_y += 1
+                        elif event.key == pygame.K_LEFT and pawn_tile_x > 0:
+                            pawn_tile_x -= 1
+                        elif event.key == pygame.K_RIGHT and pawn_tile_x < 7:
+                            pawn_tile_x += 1
+                        elif event.key == pygame.K_ESCAPE:
+                            return savestate
+            
+                    # updates pawn's positioning
+                    piece_positions["white_pawn"] = (
+                    board_offset_x + pawn_tile_x * tile_size + piece_offsets["white_pawn"][0],
+                    board_offset_y + pawn_tile_y * tile_size + piece_offsets["white_pawn"][1]
+                    )
+
+                # checks for the pawn reaching the black king; when it's done, it's complete
+                if pawn_tile_x == 4 and pawn_tile_y == 0:
+                    running = False  # closes computer view, so the player can see the drawer opening
+                    chess_completed = True 
+                    savestate[1] = "1"
+                    main.tasks.complete_task("Beat Chess")
+        pygame.display.flip()
+    return savestate
+
 # Main loop
-def front():
+def front(savestate, inventory, state):
+
     interaction_time = 0
 
     clock = pygame.time.Clock()
@@ -95,8 +212,7 @@ def front():
         # Event handling
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                pygame.quit()
-                sys.exit()
+                running = False
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 # Check if player clicked on an object
                 for obj_name, obj_rect in objects.items():
@@ -105,7 +221,7 @@ def front():
                         interaction_time = time.time()
                         # If the monitor is clicked, unlock the door (win condition)
                         if obj_name == "computer":
-                            main.computer()  # Set win state
+                            save = computer(savestate, int(savestate[0]), int(savestate[1]))
                         if obj_name == "printer":
                             game_state.unlock_door() # Set win state
 
@@ -125,5 +241,12 @@ def front():
         clock.tick(30)  # Cap the frame rate
 
     # Quit Pygame when loop ends
+    with open("savedata.txt", "w") as save:
+        for line in savestate:
+            save.write(str(line) + "\n")
+        for item in inventory:
+            if item not in state:
+                save.write(str(f"{item}\n"))
+                state.append(item)
     pygame.quit()
     sys.exit()

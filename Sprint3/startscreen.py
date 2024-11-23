@@ -9,6 +9,7 @@ Date(s) Revised:
 11/5/2024: Connects to front
 11/7/2024: Properly loads and deletes saves
 11/16/2024: Scales button placement to window size
+11/23/24: Added saving handling to pass to function
 Preconditions: No inputs or outputs
 Postconditions: No differing return values
 Errors/Exceptions: No intended errors/exceptions
@@ -21,6 +22,7 @@ import pygame
 import sys
 import os
 from front_room import front
+import helper
 
 pygame.font.init()
 pygame.init()
@@ -71,15 +73,23 @@ def start_game():
     if os.path.exists(file_path):
         open(file_path, "w").close()
     
-    front()
+    front([0,0], [], [])
 def load_save():
     file_path = "savedata.txt"
 
     if os.path.exists(file_path):
-        print("File exists")
-        front()
+        savestate = helper.handle_save(file_path)
+        state = []
+        inventory = []
+        i = 2
+        while i < len(savestate):
+            if savestate[i] not in inventory:
+                inventory.append(str(savestate[i]))
+                state.append(str(savestate[i]))
+            i += 1
+        front(savestate, inventory, state)
     else:
-        front()
+        front([0, 0], [], [])
         pass
 # Initialize Pygame
 
