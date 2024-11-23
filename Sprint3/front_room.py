@@ -8,7 +8,7 @@ Date(s) Revised:
 11/5/2024: Made a main function for connecting to other screens
 11/10/2024: Added win_lose conditions
 11/16/2024: Avoided using "global" for interaction_time
-11/23/2024: Added the computer from Sam's main.py to this screen to avoid using temp room. More will need to be done for full integration.
+11/23/2024: Added the computer from Sam's main.py to this screen to avoid using temp room. More will need to be done for full integration. Updated for pause menu
 Preconditions: Requires a JPEG image located in the same directory as the program.
 Postconditions: A graphical window displaying the room background with interactive objects. Users can hover and click on objects to see visual feedback
 Errors/Exceptions: No intended errors/exceptions
@@ -23,7 +23,7 @@ import sys
 import win_lose
 import time
 import main
-
+import helper
 
 pygame.init()
 
@@ -221,9 +221,12 @@ def front(savestate, inventory, state):
                         interaction_time = time.time()
                         # If the monitor is clicked, unlock the door (win condition)
                         if obj_name == "computer":
-                            save = computer(savestate, int(savestate[0]), int(savestate[1]))
+                            savestate = computer(savestate, int(savestate[0]), int(savestate[1]))
                         if obj_name == "printer":
                             game_state.unlock_door() # Set win state
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    helper.pause_menu(screen, font, "savedata.txt", savestate, inventory, state)
 
         # Check if interaction text should be cleared after 2 seconds
         if time.time() - interaction_time > 2:
@@ -241,12 +244,6 @@ def front(savestate, inventory, state):
         clock.tick(30)  # Cap the frame rate
 
     # Quit Pygame when loop ends
-    with open("savedata.txt", "w") as save:
-        for line in savestate:
-            save.write(str(line) + "\n")
-        for item in inventory:
-            if item not in state:
-                save.write(str(f"{item}\n"))
-                state.append(item)
+    helper.save_state(savestate, inventory, state)
     pygame.quit()
     sys.exit()
