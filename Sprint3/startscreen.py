@@ -105,9 +105,6 @@ def start():
     toptextRect = toptext.get_rect()
     bottomtextRect = bottomtext.get_rect()
 
-    toptextRect.center = (400, 50)
-    bottomtextRect.center = (400, 65)
-
     count = 0
 
     while True:

@@ -47,6 +47,11 @@ Ben Weinzirl
 * Added Computer from main.py to frontroom.py and added save handling to startscreen to be passed to the game
 * Added Mick's pause menu to helper.py
 
+11/24/24 - 1h
+
+* Added animation to title
+* Added Sam's chess fix
+
 ---
 
 Del Endecott

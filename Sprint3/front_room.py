@@ -9,6 +9,7 @@ Date(s) Revised:
 11/10/2024: Added win_lose conditions
 11/16/2024: Avoided using "global" for interaction_time
 11/23/2024: Added the computer from Sam's main.py to this screen to avoid using temp room. More will need to be done for full integration. Updated for pause menu
+11/24/2024: Added Sam's fix to chess
 Preconditions: Requires a JPEG image located in the same directory as the program.
 Postconditions: A graphical window displaying the room background with interactive objects. Users can hover and click on objects to see visual feedback
 Errors/Exceptions: No intended errors/exceptions
@@ -148,17 +149,21 @@ def computer(savestate, computer_unlocked, chess_completed):
                     return savestate
                 # lets the chess board's pawn be controlled when the task is available; it makes sure it doesnt go out of bounds as well
                 elif computer_unlocked and not chess_completed:
+                    new_tile_x, new_tile_y = pawn_tile_x, pawn_tile_y
                     if event.type == pygame.KEYDOWN:
                         if event.key == pygame.K_UP and pawn_tile_y > 0:
-                            pawn_tile_y -= 1
+                            new_tile_y -= 1
                         elif event.key == pygame.K_DOWN and pawn_tile_y < 7:
-                            pawn_tile_y += 1
+                            new_tile_y += 1
                         elif event.key == pygame.K_LEFT and pawn_tile_x > 0:
-                            pawn_tile_x -= 1
+                            new_tile_x -= 1
                         elif event.key == pygame.K_RIGHT and pawn_tile_x < 7:
-                            pawn_tile_x += 1
+                            new_tile_x += 1
                         elif event.key == pygame.K_ESCAPE:
                             return savestate
+                        
+                    if (new_tile_x, new_tile_y) != (0, 5):  # white king's position in chessboard coordinates
+                        pawn_tile_x, pawn_tile_y = new_tile_x, new_tile_y
             
                     # updates pawn's positioning
                     piece_positions["white_pawn"] = (
