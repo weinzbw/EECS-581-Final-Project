@@ -21,7 +21,8 @@ import pygame
 import sys
 import win_lose
 import time
-import main
+#import main
+import back_room
 
 
 pygame.init()
@@ -50,8 +51,12 @@ objects = {
 HIGHLIGHT_COLOR = (255, 255, 0)
 TRANSPARENT_COLOR = (0, 0, 255, 100)
 
-# Initialize game state
-game_state = win_lose.GameState() # 1-hour timer and locked door initially
+# Added button
+BUTTON_COLOR = (0, 200, 0)
+BUTTON_HOVER_COLOR = (0, 255, 0)
+TEXT_COLOR = (255, 255, 255)
+# Button for switching views
+button_rect = pygame.Rect(WIDTH // 2 - 50, HEIGHT - 60, 100, 40)
 
 # Function to draw a transparent overlay on a rectangle
 def draw_transparent_overlay(rect, color):
@@ -60,10 +65,11 @@ def draw_transparent_overlay(rect, color):
     screen.blit(overlay, rect.topleft)
 
 # Main loop
-def front():
+def front(game_state):
+    clock = pygame.time.Clock()
     interaction_time = 0
 
-    clock = pygame.time.Clock()
+    
     running = True
     while running:
         # Check win/fail conditions
@@ -92,6 +98,14 @@ def front():
                 # Transparent overlay when not hovering
                 draw_transparent_overlay(obj_rect, TRANSPARENT_COLOR)
 
+        # Draw button
+        button_color = BUTTON_HOVER_COLOR if button_rect.collidepoint(mouse_pos) else BUTTON_COLOR
+        pygame.draw.rect(screen, button_color, button_rect)
+        button_text = font.render("Back View", True, TEXT_COLOR)
+        button_text_rect = button_text.get_rect(center=button_rect.center)
+        screen.blit(button_text, button_text_rect)
+
+        
         # Event handling
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -108,8 +122,11 @@ def front():
                             main.computer()  # Set win state
                         if obj_name == "printer":
                             game_state.unlock_door() # Set win state
+                    # Check if button is clicked
+                    if button_rect.collidepoint(mouse_pos):
+                        back_room.back(game_state) # Switch to back view
 
-        # Check if interaction text should be cleared after 2 seconds
+         # Check if interaction text should be cleared after 2 seconds
         if time.time() - interaction_time > 2:
             interaction_text = ""
         # Display interaction text
@@ -127,3 +144,6 @@ def front():
     # Quit Pygame when loop ends
     pygame.quit()
     sys.exit()
+if __name__ == "__main__":
+    game_state = win_lose.GameState() # 1-hour timer and locked door initially
+    front(game_state)

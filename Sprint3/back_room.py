@@ -14,7 +14,8 @@ Known Faults:
 
 import pygame
 import sys
-
+import win_lose
+import front_room
 
 pygame.init()
 
@@ -24,7 +25,7 @@ screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Back View")
 
 # Load room image
-room_image = pygame.image.load("place_holder_back.jpeg") 
+room_image = pygame.image.load("place_holder_back.jpeg")
 room_image = pygame.transform.scale(room_image, (WIDTH, HEIGHT))
 
 # Define font
@@ -40,51 +41,73 @@ objects = {
 # Colors
 HIGHLIGHT_COLOR = (255, 255, 0)
 TRANSPARENT_COLOR = (0, 0, 255, 100)
+BUTTON_COLOR = (200, 0, 0)
+BUTTON_HOVER_COLOR = (255, 0, 0)
+TEXT_COLOR = (255, 255, 255)
+
+# Button for switching views
+button_rect = pygame.Rect(WIDTH // 2 - 50, HEIGHT - 60, 120, 40)
 
 # Function to draw a transparent overlay on a rectangle
 def draw_transparent_overlay(rect, color):
-    overlay = pygame.Surface((rect.width, rect.height), pygame.SRCALPHA) 
+    overlay = pygame.Surface((rect.width, rect.height), pygame.SRCALPHA)
     overlay.fill(color)
     screen.blit(overlay, rect.topleft)
 
 # Main loop
-clock = pygame.time.Clock()
-running = True
-while running:
-    # Clear the screen
-    screen.blit(room_image, (0, 0))
+def back(game_state):
+    clock = pygame.time.Clock()
+    running = True
 
-    # Get mouse position
-    mouse_pos = pygame.mouse.get_pos()
+    while running:
+        # Clear the screen
+        screen.blit(room_image, (0, 0))
 
-    # Draw objects
-    for obj_name, obj_rect in objects.items():
-        if obj_rect.collidepoint(mouse_pos):
-            # Highlight object when hovering
-            draw_transparent_overlay(obj_rect, HIGHLIGHT_COLOR + (100,))  
-            interaction_text = f"You are hovering over the {obj_name}."
-        else:
-            # Transparent object when not hovering
-            draw_transparent_overlay(obj_rect, TRANSPARENT_COLOR)
+        # Get mouse position
+        mouse_pos = pygame.mouse.get_pos()
 
-    # Event handling
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
+        # Draw objects
+        for obj_name, obj_rect in objects.items():
+            if obj_rect.collidepoint(mouse_pos):
+                draw_transparent_overlay(obj_rect, HIGHLIGHT_COLOR + (100,))
+                interaction_text = f"You are hovering over the {obj_name}."
+            else:
+                draw_transparent_overlay(obj_rect, TRANSPARENT_COLOR)
+
+        # Draw button
+        button_color = BUTTON_HOVER_COLOR if button_rect.collidepoint(mouse_pos) else BUTTON_COLOR
+        pygame.draw.rect(screen, button_color, button_rect)
+        button_text = font.render("Front View", True, TEXT_COLOR)
+        button_text_rect = button_text.get_rect(center=button_rect.center)
+        screen.blit(button_text, button_text_rect)
+
+        # Event handling
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                if button_rect.collidepoint(mouse_pos):
+                    front_room.front(game_state)  # Switch to front view
+
+        # Check win/lose conditions
+        status = game_state.update()
+        if status == "win":
+            win_lose.display_win_screen(screen)
             running = False
-        elif event.type == pygame.MOUSEBUTTONDOWN:
-            # Check if player clicked on an object
-            for obj_name, obj_rect in objects.items():
-                if obj_rect.collidepoint(mouse_pos):
-                    interaction_text = f"You clicked on the {obj_name}."
+        elif status == "fail":
+            win_lose.display_fail_screen(screen)
+            running = False
 
-    # Display text
-    text_surface = font.render(interaction_text, True, (0, 0, 0))
-    screen.blit(text_surface, (20, 20))
+        # Display countdown timer
+        win_lose.display_timer(screen, game_state.timer)
 
-    # Update display
-    pygame.display.flip()
-    clock.tick(30) # Cap the frame rate
+        # Update display
+        pygame.display.flip()
+        clock.tick(30)
 
-# Quit Pygame
-pygame.quit()
-sys.exit()
+# Run the back view
+if __name__ == "__main__":
+    game_state = win_lose.GameState()
+    back(game_state)
+
