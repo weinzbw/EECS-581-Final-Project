@@ -10,6 +10,7 @@ Date(s) Revised:
 11/7/2024: Properly loads and deletes saves
 11/16/2024: Scales button placement to window size
 11/23/24: Added saving handling to pass to function
+11/24/24: Added title animation
 Preconditions: No inputs or outputs
 Postconditions: No differing return values
 Errors/Exceptions: No intended errors/exceptions
@@ -27,6 +28,8 @@ import helper
 pygame.font.init()
 pygame.init()
 
+clock = pygame.time.Clock()
+
 # Set up the display
 screen = pygame.display.set_mode((800, 600))
 pygame.display.set_caption("Inconvenient Escape")
@@ -40,12 +43,12 @@ BLACK = (0, 0, 0)
 # Set up fonts
 font = pygame.font.SysFont('Arial', 32)
 
-# Button click state
-button_clicked = False
 
 # Create a function to draw a button
 def draw_button(text, x, y, width, height, inactive_color, active_color, action=None):
-    global button_clicked
+    # Button click state
+    button_clicked = False
+
     mouse = pygame.mouse.get_pos()
     click = pygame.mouse.get_pressed()
 
@@ -96,16 +99,20 @@ def load_save():
 def start():
     screen.fill(WHITE)
 
-    text = font.render('INCONVENIENT ESCAPE', True, BLACK)
+    toptext = font.render('INCONVENIENT', True, BLACK)
+    bottomtext = font.render("ESCAPE", True, BLACK)
 
-    textRect = text.get_rect()
+    toptextRect = toptext.get_rect()
+    bottomtextRect = bottomtext.get_rect()
 
-    textRect.center = (400, 50)
+    toptextRect.center = (400, 50)
+    bottomtextRect.center = (400, 65)
+
+    count = 0
 
     while True:
         screen.fill(WHITE)
 
-        screen.blit(text, textRect)
         # Draw the button (text, x, y, width, height, inactive color, active color, action)
         screen_width, screen_height = screen.get_size()
         button_width, button_height = 200, 50
@@ -115,6 +122,21 @@ def start():
 
         draw_button("Start Game", (screen_width - button_width) // 2, start_button_y, button_width, button_height, GRAY, DARK_GRAY, start_game)
         draw_button("Load Game", (screen_width - button_width) // 2, load_button_y, button_width, button_height, GRAY, DARK_GRAY, load_save)
+
+        if count == 0:
+            for i in range(400):
+                other_side = 800 - i
+                screen.fill(WHITE)
+                clock.tick(150)
+                toptextRect.center = (i, 50)
+                bottomtextRect.center = (other_side, 80)
+                screen.blit(toptext, toptextRect)
+                screen.blit(bottomtext, bottomtextRect)
+                pygame.display.flip()
+            count += 1
+        else:
+            screen.blit(toptext, toptextRect)
+            screen.blit(bottomtext, bottomtextRect)
 
         # Event handling
         for event in pygame.event.get():
