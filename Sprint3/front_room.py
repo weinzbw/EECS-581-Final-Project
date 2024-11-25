@@ -9,7 +9,7 @@ Date(s) Revised:
 11/10/2024: Added win_lose conditions
 11/16/2024: Avoided using "global" for interaction_time
 11/23/2024: Added the computer from Sam's main.py to this screen to avoid using temp room. More will need to be done for full integration. Updated for pause menu
-11/24/2024: Added Sam's fix to chess
+11/24/2024: Added Sam's fix to chess, added navigation
 Preconditions: Requires a JPEG image located in the same directory as the program.
 Postconditions: A graphical window displaying the room background with interactive objects. Users can hover and click on objects to see visual feedback
 Errors/Exceptions: No intended errors/exceptions
@@ -25,6 +25,8 @@ import win_lose
 import time
 import main
 import helper
+from right import right
+from left import left
 
 pygame.init()
 
@@ -36,6 +38,14 @@ pygame.display.set_caption("Front View")
 # Load room image
 room_image = pygame.image.load("front_room.jpeg") 
 room_image = pygame.transform.scale(room_image, (WIDTH, HEIGHT))
+left_image = pygame.image.load("Images/left_arrow_white.png")
+right_image = pygame.image.load("Images/right_arrow_white.png")
+left_image = pygame.transform.scale(left_image, (50, 50))
+right_image = pygame.transform.scale(right_image, (50, 50))
+leftRect = left_image.get_rect()
+rightRect = right_image.get_rect()
+leftRect.center = (50, 300)
+rightRect.center = (750, 300)
 
 # Define font
 font = pygame.font.SysFont(None, 36)
@@ -45,7 +55,8 @@ interaction_text = ""
 objects = {
     "computer": pygame.Rect(120, 260, 100, 100),
     "printer": pygame.Rect(500, 280, 180, 110),
-    
+    "right": rightRect,
+    "left": leftRect
 }
 
 # Colors
@@ -106,6 +117,8 @@ def draw_transparent_overlay(rect, color):
     overlay = pygame.Surface((rect.width, rect.height), pygame.SRCALPHA) 
     overlay.fill(color)
     screen.blit(overlay, rect.topleft)
+    screen.blit(left_image, leftRect)
+    screen.blit(right_image, rightRect)
 
 def computer(savestate, computer_unlocked, chess_completed):
     # block of variables for the progress bar; it starts at the pixel of the top-left corner of the progress bar
@@ -229,6 +242,10 @@ def front(savestate, inventory, state):
                             savestate = computer(savestate, int(savestate[0]), int(savestate[1]))
                         if obj_name == "printer":
                             game_state.unlock_door() # Set win state
+                        if obj_name == "left":
+                            left(savestate, inventory, state)
+                        if obj_name == "right":
+                            right(savestate, inventory, state)
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     helper.pause_menu(screen, font, "savedata.txt", savestate, inventory, state)
