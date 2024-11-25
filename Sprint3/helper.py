@@ -5,7 +5,7 @@ Programmer(s): Ben Weinzirl, Sam Harrison, Mick Torres
 Date Made: 10/23/2024
 Date(s) Revised:
 10/26/2024: Updated header comment
-11/16/2024: Updated for Sam's portion which added sounds to objects. Added handle_save()\
+11/16/2024: Updated for Sam's portion which added sounds to objects. Added handle_save()
 11/23/2024: Added Mick's pause menu addition
 Preconditions: Does not involve input or output
 Postconditions: No differing return values
