@@ -15,6 +15,7 @@ Known Faults: Hitboxes for clicks is off. Need different background
 
 import pygame
 import helper
+import objects
 import sys
 import front_room
 import back_room
@@ -65,7 +66,7 @@ def left_action(savestate, inventory, state):
 def right_action(savestate, inventory, state):
     back_room.back(savestate, inventory, state)
 
-class RightRoom(helper.Room):
+class RightRoom(objects.Room):
     def __init__(self):
         super().__init__()
         # Define hotspots for each item (coordinates and sizes are placeholders based on image layout)

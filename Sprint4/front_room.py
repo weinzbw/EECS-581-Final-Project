@@ -23,10 +23,9 @@ import pygame
 import sys
 import win_lose
 import time
-import main
 import helper
-from right import right
-from left import left
+import right
+import left
 
 pygame.init()
 
@@ -243,9 +242,9 @@ def front(savestate, inventory, state):
                         if obj_name == "printer":
                             game_state.unlock_door() # Set win state
                         if obj_name == "left":
-                            left(savestate, inventory, state)
+                            left.left(savestate, inventory, state)
                         if obj_name == "right":
-                            right(savestate, inventory, state)
+                            right.right(savestate, inventory, state)
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     helper.pause_menu(screen, font, "savedata.txt", savestate, inventory, state)
