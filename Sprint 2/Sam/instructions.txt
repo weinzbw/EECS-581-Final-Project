@@ -1,3 +1,0 @@
-To unlock the computer, just keep clicking the right arrow until it reaches the end.
-To beat chess, use the arrow keys to have the pawn touch the king.
-Use I and T for inventory and task list respectively.

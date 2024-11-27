@@ -1,6 +1,0 @@
-10/9 1:10 PM - worked on our sprints (30 mins)
-10/11 2:46 PM - finished working on our sprints (1 hr)
-10/19 1:10 PM - worked on artifacts 6 and 7 (1 hr)
-10/26 10:00 AM - worked on task.py (2 hrs)
-10/27 9:00 AM - worked on task.py, main.py, and made a lot of assets (5 hrs)
-Total - 9:30 spent
