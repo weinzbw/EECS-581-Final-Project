@@ -53,6 +53,12 @@ Ben Weinzirl
 * Added Sam's chess fix
 * Connected all the rooms, ensured saving and the pause menu still worked
 
+11/27/2024 - .5h
+
+* Initialized Sprint 4
+* Moved GameObject and Room classes to object.py to avoid circular imports
+* Removed task functionality from front_room
+
 ---
 
 Del Endecott
