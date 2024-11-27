@@ -10,6 +10,7 @@ Date(s) Revised:
 11/16/2024: Avoided using "global" for interaction_time
 11/23/2024: Added the computer from Sam's main.py to this screen to avoid using temp room. More will need to be done for full integration. Updated for pause menu
 11/24/2024: Added Sam's fix to chess, added navigation
+11/27/2024: Removed task implementation
 Preconditions: Requires a JPEG image located in the same directory as the program.
 Postconditions: A graphical window displaying the room background with interactive objects. Users can hover and click on objects to see visual feedback
 Errors/Exceptions: No intended errors/exceptions
@@ -153,10 +154,8 @@ def computer(savestate, computer_unlocked, chess_completed):
                         progress_x_offset += 4
                         right_arrow_count += 1
                         if right_arrow_count >= 36:
-                            main.tasks.complete_task("Unlock the computer")
                             computer_unlocked = True # changed from game states above
                             savestate[0]="1"
-                            main.tasks.add_task("Beat Chess")  # gives the player this task, as chess is now visible
                 elif event.key == pygame.K_ESCAPE:
                     return savestate
                 # lets the chess board's pawn be controlled when the task is available; it makes sure it doesnt go out of bounds as well
@@ -188,7 +187,6 @@ def computer(savestate, computer_unlocked, chess_completed):
                     running = False  # closes computer view, so the player can see the drawer opening
                     chess_completed = True 
                     savestate[1] = "1"
-                    main.tasks.complete_task("Beat Chess")
         pygame.display.flip()
     return savestate
 
