@@ -7,6 +7,7 @@ Date(s) Revised:
 10/26/2024: Updated header comment
 11/16/2024: Updated for Sam's portion which added sounds to objects. Added handle_save()
 11/23/2024: Added Mick's pause menu addition
+12/2/2024: Updated saving for Inventory Class
 Preconditions: Does not involve input or output
 Postconditions: No differing return values
 Errors/Exceptions: No intended errors/exceptions
@@ -18,6 +19,7 @@ Known Faults: N/A
 import pygame
 import sys
 import front_room
+from objects import Inventory
 #pygame.mixer.init()  # ADDED
 
 def handle_save(path):
@@ -39,10 +41,9 @@ def save_state(savestate, inventory, state):
     with open("savedata.txt", "w") as save:
         for line in savestate:
             save.write(str(line) + "\n")
-        for item in inventory:
+        for item in inventory.items:
             if item not in state:
                 save.write(str(f"{item}\n"))
-                state.append(item)
 
 def pause_menu(window, font, save_path, savestate, inventory, state):
     """Displays the pause menu and handles interactions using helper functions."""

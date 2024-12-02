@@ -6,6 +6,8 @@ Date Made: 10/27/2024
 Date(s) Revised: 
 10/27/2024: Added placeholder image and object interaction
 11/24/2024: Added navigation
+12/1/2024: Updated art
+12/2/2024: Added Inventory Class Initalization. Removed left room from rotation
 Preconditions: Requires a JPEG image located in the same directory as the program.
 Postconditions: A graphical window displaying the room background with interactive objects. Users can hover and click on objects to see visual feedback
 Errors/Exceptions: No intended errors/exceptions
@@ -17,8 +19,9 @@ Known Faults:
 import pygame
 import sys
 import right
-import left
+import front_room
 import helper
+from objects import Inventory
 
 pygame.init()
 
@@ -64,12 +67,17 @@ def draw_transparent_overlay(rect, color):
 # Main loop
 def back(savestate, inventory, state):
     clock = pygame.time.Clock()
+    pygame.display.set_caption("Back Room")
     running = True
     while running:
         # Clear the screen
         screen.blit(room_image, (0, 0))
         screen.blit(left_image, leftRect)
         screen.blit(right_image, rightRect)
+
+        if inventory.visible:
+            inventory.draw(screen)
+
 
         # Get mouse position
         mouse_pos = pygame.mouse.get_pos()
@@ -94,12 +102,14 @@ def back(savestate, inventory, state):
                     if obj_rect.collidepoint(mouse_pos):
                         interaction_text = f"You clicked on the {obj_name}."
                         if obj_name == "right":
-                            left.left(savestate, inventory, state)
+                            front_room.front(savestate, inventory, state)
                         if obj_name == "left":
                             right.right(savestate, inventory, state)
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     helper.pause_menu(screen, font, "savedata.txt", savestate, inventory, state)
+                if event.key == pygame.K_i:
+                    inventory.toggle_visibility()
 
         # Display text
         text_surface = font.render(interaction_text, True, (0, 0, 0))

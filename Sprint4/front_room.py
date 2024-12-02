@@ -11,6 +11,7 @@ Date(s) Revised:
 11/23/2024: Added the computer from Sam's main.py to this screen to avoid using temp room. More will need to be done for full integration. Updated for pause menu
 11/24/2024: Added Sam's fix to chess, added navigation
 11/27/2024: Removed task implementation
+12/2/2024: Added Inventory Class Initalization. Removed left room from rotation
 Preconditions: Requires a JPEG image located in the same directory as the program.
 Postconditions: A graphical window displaying the room background with interactive objects. Users can hover and click on objects to see visual feedback
 Errors/Exceptions: No intended errors/exceptions
@@ -26,7 +27,8 @@ import win_lose
 import time
 import helper
 import right
-import left
+import back_room
+from objects import Inventory
 
 pygame.init()
 
@@ -191,9 +193,10 @@ def computer(savestate, computer_unlocked, chess_completed):
     return savestate
 
 # Main loop
-def front(savestate, inventory, state):
-
+def front(savestate, inventory: Inventory, state):
     interaction_time = 0
+
+    pygame.display.set_caption("Front Room")
 
     clock = pygame.time.Clock()
     running = True
@@ -209,6 +212,9 @@ def front(savestate, inventory, state):
 
         # Clear the screen and display room image
         screen.blit(room_image, (0, 0))
+
+        if inventory.visible:
+            inventory.draw(screen)
 
         # Get mouse position
         mouse_pos = pygame.mouse.get_pos()
@@ -240,12 +246,14 @@ def front(savestate, inventory, state):
                         if obj_name == "printer":
                             game_state.unlock_door() # Set win state
                         if obj_name == "left":
-                            left.left(savestate, inventory, state)
+                            back_room.back(savestate, inventory, state)
                         if obj_name == "right":
                             right.right(savestate, inventory, state)
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     helper.pause_menu(screen, font, "savedata.txt", savestate, inventory, state)
+                if event.key == pygame.K_i:
+                    inventory.toggle_visibility()
 
         # Check if interaction text should be cleared after 2 seconds
         if time.time() - interaction_time > 2:

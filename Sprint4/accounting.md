@@ -59,6 +59,14 @@ Ben Weinzirl
 * Moved GameObject and Room classes to object.py to avoid circular imports
 * Removed task functionality from front_room
 
+12/1/2024 - 0.25h
+
+* Updated art of rooms
+
+12/2/2024 - .75h
+
+* Added Inventory Class from Sam and removed left.py from room rotation
+
 ---
 
 Del Endecott

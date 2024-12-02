@@ -5,6 +5,7 @@ Programmer(s): Mick Torres
 Date Made:10/27/2024
 Date(s) Revised:
 11/24/2024: Added navigation
+12/1/2024: Updated art
 Preconditions: No inputs or outputs
 Postconditions: No differing return values
 Errors/Exceptions: No intended errors/exceptions
@@ -19,6 +20,7 @@ import objects
 import sys
 import front_room
 import back_room
+from objects import Inventory
 
 # Initialize Pygame if not already initialized
 pygame.init()
@@ -99,7 +101,10 @@ def right(savestate, inventory, state):
         right_room_instance.draw(screen)
         screen.blit(left_image, leftRect)
         screen.blit(right_image, rightRect)
-        
+
+        if inventory.visible:
+            inventory.draw(screen)
+
         # Event handling
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -113,5 +118,7 @@ def right(savestate, inventory, state):
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     helper.pause_menu(screen, font, "savedata.txt", savestate, inventory, state)
+                if event.key == pygame.K_i:
+                    inventory.toggle_visibility()
 
         pygame.display.update()
