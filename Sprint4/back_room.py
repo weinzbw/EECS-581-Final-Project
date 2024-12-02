@@ -28,7 +28,7 @@ screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Back View")
 
 # Load room image
-room_image = pygame.image.load("place_holder_back.jpeg") 
+room_image = pygame.image.load("back room.JPG") 
 room_image = pygame.transform.scale(room_image, (WIDTH, HEIGHT))
 left_image = pygame.image.load("Images/left_arrow_white.png")
 right_image = pygame.image.load("Images/right_arrow_white.png")
@@ -45,8 +45,8 @@ interaction_text = ""
 
 # Define objects
 objects = {
-    "stove": pygame.Rect(180, 260, 120, 250),
-    "sink": pygame.Rect(460, 300, 120, 100),
+    "fridge": pygame.Rect(80, 270, 150, 270),
+    "blender": pygame.Rect(625, 200, 80, 150),
     "left": leftRect,
     "right": rightRect
 }

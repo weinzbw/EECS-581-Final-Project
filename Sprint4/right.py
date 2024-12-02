@@ -26,7 +26,7 @@ pygame.init()
 font = pygame.font.SysFont(None, 36)
 
 # Load the background image for the front room
-background_image = pygame.image.load('background.jpg')
+background_image = pygame.image.load('right room.JPG')
 background_image = pygame.transform.scale(background_image, (800, 600))
 left_image = pygame.image.load("Images/left_arrow_white.png")
 right_image = pygame.image.load("Images/right_arrow_white.png")

@@ -18,7 +18,7 @@ Known Faults: N/A
 import pygame
 import sys
 import front_room
-pygame.mixer.init()  # ADDED
+#pygame.mixer.init()  # ADDED
 
 def handle_save(path):
     with open(path, "r") as save:

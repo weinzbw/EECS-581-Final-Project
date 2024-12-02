@@ -13,7 +13,7 @@ Known Faults: N/A
 """
 import pygame
 
-pygame.mixer.init()  # ADDED
+#pygame.mixer.init()  # ADDED
 
 class Room:
     def __init__(self):
