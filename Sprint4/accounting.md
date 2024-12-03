@@ -67,6 +67,10 @@ Ben Weinzirl
 
 * Added Inventory Class from Sam and removed left.py from room rotation
 
+12/3/2024 - 0.5h
+
+* Added Uno Reverse Card to front_room printer and updated hotspots in right.py
+
 ---
 
 Del Endecott

@@ -12,6 +12,7 @@ Date(s) Revised:
 11/24/2024: Added Sam's fix to chess, added navigation
 11/27/2024: Removed task implementation
 12/2/2024: Added Inventory Class Initalization. Removed left room from rotation
+12/3/2024: Added Uno Reverse Card to printer
 Preconditions: Requires a JPEG image located in the same directory as the program.
 Postconditions: A graphical window displaying the room background with interactive objects. Users can hover and click on objects to see visual feedback
 Errors/Exceptions: No intended errors/exceptions
@@ -244,7 +245,9 @@ def front(savestate, inventory: Inventory, state):
                         if obj_name == "computer":
                             savestate = computer(savestate, int(savestate[0]), int(savestate[1]))
                         if obj_name == "printer":
-                            game_state.unlock_door() # Set win state
+                            if "Uno Reverse Card" not in inventory.items:
+                                inventory.add_item("Uno Reverse Card")
+                            #game_state.unlock_door() # Set win state
                         if obj_name == "left":
                             back_room.back(savestate, inventory, state)
                         if obj_name == "right":

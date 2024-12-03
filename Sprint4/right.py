@@ -6,6 +6,7 @@ Date Made:10/27/2024
 Date(s) Revised:
 11/24/2024: Added navigation
 12/1/2024: Updated art
+12/3/2024: Updated Hotspots
 Preconditions: No inputs or outputs
 Postconditions: No differing return values
 Errors/Exceptions: No intended errors/exceptions
@@ -39,6 +40,13 @@ rightRect = right_image.get_rect()
 leftRect.center = (50, 300)
 rightRect.center = (750, 300)
 
+# def draw_transparent_overlay(rect, color, screen):
+#     overlay = pygame.Surface((rect.width, rect.height), pygame.SRCALPHA) 
+#     overlay.fill(color)
+#     screen.blit(overlay, rect.topleft)
+#     screen.blit(left_image, leftRect)
+#     screen.blit(right_image, rightRect)
+
 # Define interactive hotspots with click detection
 class Hotspot:
     def __init__(self, x, y, width, height, action):
@@ -56,7 +64,7 @@ def monitor_action(savestate, inventory, state):
 def printer_action(savestate, inventory, state):
     print("Printer clicked! Perhaps it prints something useful.")
 
-def shredder_action(savestate, inventory, state):
+def dresser_action(savestate, inventory, state):
     print("Shredder clicked! Maybe it hides something inside.")
 
 def safe_action(savestate, inventory, state):
@@ -73,10 +81,10 @@ class RightRoom(objects.Room):
         super().__init__()
         # Define hotspots for each item (coordinates and sizes are placeholders based on image layout)
         self.hotspots = [
-            Hotspot(100, 200, 150, 100, monitor_action),  # Monitor area
-            Hotspot(300, 180, 100, 150, printer_action),  # Printer area
-            Hotspot(350, 450, 100, 100, shredder_action),  # Shredder area
-            Hotspot(500, 250, 120, 100, safe_action),      # Safe area
+            # Hotspot(100, 200, 150, 100, monitor_action),  # Monitor area
+            # Hotspot(300, 180, 100, 150, printer_action),  # Printer area
+            Hotspot(80, 400, 130, 100, dresser_action),  # Dresser
+            Hotspot(550, 450, 120, 100, safe_action),      # Safe area
             Hotspot(leftRect.left, leftRect.top, leftRect.width, leftRect.height, left_action),
             Hotspot(rightRect.left, rightRect.top, rightRect.width, rightRect.height, right_action)
         ]

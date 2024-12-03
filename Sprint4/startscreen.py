@@ -12,6 +12,7 @@ Date(s) Revised:
 11/23/24: Added saving handling to pass to function
 11/24/24: Added title animation
 12/2/2024: Added Inventory Class Initialization
+12/3/2024: Fixed Load Save
 Preconditions: No inputs or outputs
 Postconditions: No differing return values
 Errors/Exceptions: No intended errors/exceptions
@@ -89,7 +90,7 @@ def load_save():
         inventory = objects.Inventory()
         i = 2
         while i < len(savestate):
-            if savestate[i] not in inventory:
+            if savestate[i] not in inventory.items:
                 inventory.add_item(str(savestate[i]))
                 state.append(str(savestate[i]))
             i += 1
