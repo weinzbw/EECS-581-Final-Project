@@ -71,6 +71,10 @@ Ben Weinzirl
 
 * Added Uno Reverse Card to front_room printer and updated hotspots in right.py
 
+12/4/2024 - 0.5h
+
+* Moved images to Images, fixed load and delete save for pause menu. Added Extremely Small Crowbar to items after completing chess and checking dresser in right.py
+
 ---
 
 Del Endecott

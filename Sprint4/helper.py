@@ -37,7 +37,7 @@ def handle_save(path):
     
     return savestate
 
-def save_state(savestate, inventory, state):
+def save_state(savestate, inventory: Inventory, state):
     with open("savedata.txt", "w") as save:
         for line in savestate:
             save.write(str(line) + "\n")
@@ -83,7 +83,8 @@ def pause_menu(window, font, save_path, savestate, inventory, state):
                         running = False
                     elif menu_items[selected_index] == "Delete Save":
                         savestate = [0, 0]  # Reset current state
-                        save_state(savestate, inventory, state)
+                        inventory = Inventory()
+                        front_room.front(savestate, inventory, state)
                         running = False
                     elif menu_items[selected_index] == "Save and Exit":
                         save_state(savestate, inventory, state)  # Save current state

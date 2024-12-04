@@ -31,7 +31,7 @@ screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Back View")
 
 # Load room image
-room_image = pygame.image.load("back room.JPG") 
+room_image = pygame.image.load("Images/back room.JPG") 
 room_image = pygame.transform.scale(room_image, (WIDTH, HEIGHT))
 left_image = pygame.image.load("Images/left_arrow_white.png")
 right_image = pygame.image.load("Images/right_arrow_white.png")

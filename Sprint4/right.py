@@ -28,9 +28,7 @@ pygame.init()
 
 font = pygame.font.SysFont(None, 36)
 
-# Load the background image for the front room
-background_image = pygame.image.load('right room.JPG')
-background_image = pygame.transform.scale(background_image, (800, 600))
+# Load iamges
 left_image = pygame.image.load("Images/left_arrow_white.png")
 right_image = pygame.image.load("Images/right_arrow_white.png")
 left_image = pygame.transform.scale(left_image, (50, 50))
@@ -65,7 +63,10 @@ def printer_action(savestate, inventory, state):
     print("Printer clicked! Perhaps it prints something useful.")
 
 def dresser_action(savestate, inventory, state):
-    print("Shredder clicked! Maybe it hides something inside.")
+    if savestate[1] == "1" and "Extremely Tiny Crowbar" not in inventory.items:
+        inventory.add_item("Extremely Tiny Crowbar")
+    else:
+        print("Dresser clicked! Maybe it hides something inside.")
 
 def safe_action(savestate, inventory, state):
     print("Safe clicked! Requires a code to open.")
@@ -89,9 +90,9 @@ class RightRoom(objects.Room):
             Hotspot(rightRect.left, rightRect.top, rightRect.width, rightRect.height, right_action)
         ]
 
-    def draw(self, surface):
+    def draw(self, surface, image):
         # Draw the background
-        surface.blit(background_image, (0, 0))
+        surface.blit(image, (0, 0))
 
     def handle_click(self, pos, savestate, inventory, state):
         for hotspot in self.hotspots:
@@ -99,6 +100,13 @@ class RightRoom(objects.Room):
 
 # Main function to display the front room, compatible with main.py
 def right(savestate, inventory, state):
+
+    background_image = pygame.image.load('Images/right room.JPG')
+    background_image = pygame.transform.scale(background_image, (800, 600))
+    if savestate[1] == "1": # Check if chess is complete
+        background_image = pygame.image.load('Images/RightRoomOpenDresser.jpg')
+        background_image = pygame.transform.scale(background_image, (800, 600))
+
     screen = pygame.display.set_mode((800, 600))
     pygame.display.set_caption("Right Room")
     right_room_instance = RightRoom()
@@ -106,7 +114,7 @@ def right(savestate, inventory, state):
     running = True
     while running:
         screen.fill((255, 255, 255))
-        right_room_instance.draw(screen)
+        right_room_instance.draw(screen, background_image)
         screen.blit(left_image, leftRect)
         screen.blit(right_image, rightRect)
 
