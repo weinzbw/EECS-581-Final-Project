@@ -1,0 +1,1 @@
+The files I edited: back_room.py and objects.pyHotkeys:'z': scroll through inventory after clicking mixer'x': select item through inventory after clicking mixer'l': give the three things
