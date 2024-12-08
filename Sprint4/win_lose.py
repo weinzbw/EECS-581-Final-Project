@@ -4,6 +4,8 @@ Description: Helper file that controls win/loss conditions. 1 hour timer complet
 Programmer(s): Naran Bat
 Date Made: 11/05/2024
 Date(s) Revised:11/10/2024: Added timer display to show remaining time on screen.
+                12/07/2024: Added win/loss screen animations and credits display
+                12/08/2024: Added credits
 Preconditions: Must be initialized before calling any functions from this file
 Postconditions: Win and loss conditions are properly displayed. Countdown timer is displayed on the game screen, updating each second.
 Errors/Exceptions: None explicitly handled
@@ -38,7 +40,7 @@ class GameTimer:
 
 class GameState:
     def __init__(self):
-        self.timer = GameTimer(60)  # 1-hour timer
+        self.timer = GameTimer(3600)  # 1-hour timer
         self.door_unlocked = False
 
     def unlock_door(self):
@@ -114,6 +116,7 @@ def display_fail_screen(screen):
 
     pygame.time.wait(3000)  # Show for 3 seconds
     display_credits(screen)
+   
 
 
 def display_credits(screen):
@@ -122,12 +125,19 @@ def display_credits(screen):
     credits = [
         "Game Development Team",
         "",
-        "Producer: ",
-        "Lead Developer: ",
-        "Developer: ",
-        "UI/UX Designer: ",
-        "Artist: ",
-        "Sound Design: ",
+        "Lead Developer:", 
+        "Ben Weinzirl",
+        "Developer:",
+        "Del Endecott",
+        "Mick Torres",
+        "Naran Bat",
+        "Samuel Harrison",
+        "Artist:",
+        "Del Endecott",
+        "Sound Design:",
+        "Samuel Harrison",
+        "",
+        "",
         "",
         "",
         "",
@@ -152,7 +162,8 @@ def display_credits(screen):
         y_offset -= 2  # Move text upward gradually
 
     # Wait a moment at the end of the credits
-    pygame.time.wait(2000)
+    pygame.time.wait(500)
+    
 
 # Function to display the countdown timer on the screen
 def display_timer(screen, timer):
