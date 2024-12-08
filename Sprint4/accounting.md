@@ -185,3 +185,7 @@ Naran Bat
 11/10/24 - 1h
 
 * Added win/fail conditions and screens
+
+12/07/24 - 2.5h
+
+* Added animations to win/fail screen and created credits screen and animation
