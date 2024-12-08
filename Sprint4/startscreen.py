@@ -140,7 +140,7 @@ def start():
                 pygame.display.flip()
             count += 1
         else: # AFter running once
-            # Display normally``
+            # Display normally
             screen.blit(toptext, toptextRect)
             screen.blit(bottomtext, bottomtextRect)
 

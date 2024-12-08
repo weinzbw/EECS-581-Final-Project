@@ -124,7 +124,7 @@ def back(savestate, inventory):
                                 print("The inventory is empty.")
                         if obj_name == "portal":
                             game_state.unlock_door
-                            display_win_screen()
+                            display_win_screen(screen)
                         if obj_name == "right":
                             front_room.front(savestate, inventory)
                         if obj_name == "left":
