@@ -9,6 +9,7 @@ Date(s) Revised:
 11/23/2024: Added Mick's pause menu addition
 12/2/2024: Updated saving for Inventory Class
 12/7/2024: Deleted "state" variable
+12/8/2024: Updated Load Save to function with all savestates
 Preconditions: Does not involve input or output
 Postconditions: No differing return values
 Errors/Exceptions: No intended errors/exceptions
@@ -52,6 +53,8 @@ def save_state(savestate, inventory: Inventory):
             save.write(str(f"{item}\n"))
 
 def pause_menu(window, font, save_path, savestate, inventory):
+
+    save_state(savestate, inventory)
     """Displays the pause menu and handles interactions using helper functions."""
     running = True
     menu_items = ["Load Save", "Delete Save", "Save and Exit"]
@@ -88,7 +91,7 @@ def pause_menu(window, font, save_path, savestate, inventory):
                         front_room.front(savestate, inventory)
                         running = False
                     elif menu_items[selected_index] == "Delete Save":
-                        savestate = [0, 0, 0]  # Reset current state
+                        savestate = [0, 0, 0, 0, 0]  # Reset current state
                         inventory = Inventory()
                         front_room.front(savestate, inventory)
                         running = False

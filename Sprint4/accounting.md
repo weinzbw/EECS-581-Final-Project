@@ -105,6 +105,12 @@ Ben Weinzirl
 * Updated blender logic
 * Ensured all room backgrounds get updated as savestate updates
 
+12/8/2024 - 0.5h
+
+* Added intermediate frame to carpet being destroyed
+* Updated comments
+* Updates helper.py to work with current savestate data
+
 ---
 
 Del Endecott

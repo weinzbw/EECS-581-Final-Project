@@ -14,6 +14,7 @@ Date(s) Revised:
 12/2/2024: Added Inventory Class Initalization. Removed left room from rotation
 12/3/2024: Added Uno Reverse Card to printer
 12/7/2024: Deleted "state" variable, added fan and cellar objects, added more savestate variables (carpet gets destroyed by ceiling fan)
+12/8/2024: Added intermediate frame to carpet getting destroyed
 Preconditions: Requires a JPEG image located in the same directory as the program.
 Postconditions: A graphical window displaying the room background with interactive objects. Users can hover and click on objects to see visual feedback
 Errors/Exceptions: No intended errors/exceptions
@@ -39,7 +40,7 @@ WIDTH, HEIGHT = 800, 600
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Front View")
 
-# Load room image
+# Load images and rects for arrows
 left_image = pygame.image.load("Images/left_arrow_white.png")
 right_image = pygame.image.load("Images/right_arrow_white.png")
 left_image = pygame.transform.scale(left_image, (50, 50))
@@ -128,6 +129,7 @@ def draw_transparent_overlay(rect, color):
 def handle_hover(obj):
     pass
 
+# Function whenver the player is on the computer screen
 def computer(savestate, computer_unlocked, chess_completed):
     # block of variables for the progress bar; it starts at the pixel of the top-left corner of the progress bar
     progress_start_x = fakebar_position[0] + 44
@@ -200,14 +202,16 @@ def computer(savestate, computer_unlocked, chess_completed):
 
 # Main loop
 def front(savestate, inventory: Inventory):
+
+    # Determines which background to use based on savestate
     room_image = pygame.image.load("Images/RealFront.jpg") 
     room_image = pygame.transform.scale(room_image, (WIDTH, HEIGHT))
 
-    if int(savestate[3]) == 1:
+    if int(savestate[3]) == 1: # If Uno Card Used
         room_image = pygame.image.load("Images/DestroyedCarpet.jpg") 
         room_image = pygame.transform.scale(room_image, (WIDTH, HEIGHT))
 
-    if int(savestate[3]) == 2:
+    if int(savestate[3]) == 2: # IF Cellar door opened
         room_image = pygame.image.load("Images/OpenFront.jpg") 
         room_image = pygame.transform.scale(room_image, (WIDTH, HEIGHT))
 
@@ -256,42 +260,65 @@ def front(savestate, inventory: Inventory):
                 # Check if player clicked on an object
                 for obj_name, obj_rect in objects.items():
                     if obj_rect.collidepoint(mouse_pos):
+
+                        # Default Interaction
                         interaction_text = f"You clicked on the {obj_name}."
                         interaction_time = time.time()
-                        # If the monitor is clicked, unlock the door (win condition)
-                        if obj_name == "computer":
-                            savestate = computer(savestate, int(savestate[0]), int(savestate[1]))
-                        if obj_name == "keyboard":
-                            if "Extremely Tiny Crowbar" in inventory.items:
-                                savestate[1] = 2
+
+                        if obj_name == "computer": # If computer clicked
+                            savestate = computer(savestate, int(savestate[0]), int(savestate[1])) # Run the computer function
+
+                        if obj_name == "keyboard": # If keyboard clicked
+                            if "Extremely Tiny Crowbar" in inventory.items: # If player has Extremely Tiny Crowbar
+                                savestate[1] = 2 # Player used the Crowbar
                                 inventory.remove_item("Extremely Tiny Crowbar")
-                                inventory.add_item("Keyboard Key")
-                        if obj_name == "printer":
-                            if "Uno Reverse Card" not in inventory.items and not int(savestate[3]) > 0:
+                                inventory.add_item("Keyboard Key") # Add Keyboard Key to inventory
+
+                        if obj_name == "printer": # If printer clicked
+
+                            if "Uno Reverse Card" not in inventory.items and not int(savestate[3]) > 0: # IF the player hasn't collected or used the Uno Reverse Card
                                 inventory.add_item("Uno Reverse Card")
-                            #game_state.unlock_door() # Set win state
-                        if obj_name == "fan" and "Uno Reverse Card" in inventory.items:
-                            savestate[3] = 1
+
+                        if obj_name == "fan" and "Uno Reverse Card" in inventory.items: # If fan clicked and the player has Uno Reverse Card
+                            savestate[3] = 1 # Carpet is destroyed
+
+                            # Show intermediate flame of carpet going to the fan
+                            room_image = pygame.image.load("Images/CarpetFly.jpg")
+                            room_image = pygame.transform.scale(room_image, (WIDTH, HEIGHT))
+                            screen.blit(room_image, (0, 0))
+                            pygame.display.flip()
+
+                            pygame.time.wait(1000) # Wait to show intermediate frame
+
+                            # Show background of carpet destroyed
                             room_image = pygame.image.load("Images/DestroyedCarpet.jpg") 
                             room_image = pygame.transform.scale(room_image, (WIDTH, HEIGHT))
-                            inventory.remove_item("Uno Reverse Card")
-                        if obj_name == "cellar":
-                            if int(savestate[3]) == 2 and not "Thing 2/2" in inventory.items:
+    
+                            inventory.remove_item("Uno Reverse Card") # Remove Uno Reverse Card from inventory
+
+                        if obj_name == "cellar": # If the cellar is clicked
+
+                            if int(savestate[3]) == 2 and not "Thing 2/2" in inventory.items: # If cellar door opened
                                 inventory.add_item("Thing 2/2")
-                            if int(savestate[3]) == 1:
-                                savestate[3] = 2
+
+                            if int(savestate[3]) == 1: # If cellar door not opened
+                                savestate[3] = 2 # Cellar door opened
+
+                                # Update background to reflect change
                                 room_image = pygame.image.load("Images/OpenFront.jpg") 
                                 room_image = pygame.transform.scale(room_image, (WIDTH, HEIGHT))
 
-                        if obj_name == "left":
-                            back_room.back(savestate, inventory)
-                        if obj_name == "right":
-                            right.right(savestate, inventory)
-            elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_ESCAPE:
-                    helper.pause_menu(screen, font, "savedata.txt", savestate, inventory)
-                if event.key == pygame.K_i:
-                    inventory.toggle_visibility()
+                        if obj_name == "left": # If left arrow clicked
+                            back_room.back(savestate, inventory) # Go to the back room
+
+                        if obj_name == "right": # If right arrow clicked
+                            right.right(savestate, inventory) # Go to the right room
+
+            elif event.type == pygame.KEYDOWN: # If a key is pressed
+                if event.key == pygame.K_ESCAPE: # If the ESC key is pressed
+                    helper.pause_menu(screen, font, "savedata.txt", savestate, inventory) # Show the pause menu
+                if event.key == pygame.K_i: # If i is pressed
+                    inventory.toggle_visibility() # Show or hide the inventory
 
         # Check if interaction text should be cleared after 2 seconds
         if time.time() - interaction_time > 2:

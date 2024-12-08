@@ -32,7 +32,7 @@ WIDTH, HEIGHT = 800, 600
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Back View")
 
-# Load room image
+# Load left and right objects
 left_image = pygame.image.load("Images/left_arrow_white.png")
 right_image = pygame.image.load("Images/right_arrow_white.png")
 left_image = pygame.transform.scale(left_image, (50, 50))
@@ -69,16 +69,18 @@ def back(savestate, inventory):
     clock = pygame.time.Clock()
     pygame.display.set_caption("Back Room")
 
-    # task 5
+    # Initialize blender task variables
     blender_clicked = False
     game_state = GameState()
 
+    # Determine room background based on savestate
     room_image = pygame.image.load("Images/back room.JPG")
     room_image = pygame.transform.scale(room_image, (WIDTH, HEIGHT))
 
-    if int(savestate[4]) == 1:
+    if int(savestate[4]) == 1: # If blender task complete
         room_image = pygame.image.load("Images/ExitHole.jpg") 
         room_image = pygame.transform.scale(room_image, (WIDTH, HEIGHT))
+    
     running = True
     while running:
         # Clear the screen
@@ -115,39 +117,34 @@ def back(savestate, inventory):
                     if obj_rect.collidepoint(mouse_pos):
                         interaction_text = f"You clicked on the {obj_name}."
                         # adding functionality of task 5
-                        if obj_name == "blender":
-                            print("hi")
+                        if obj_name == "blender": # If blender clicked
                             blender_clicked = True
-                            # Print all items in the inventory
-                            if inventory.items:
-                                print("Inventory items:")
-                                for item in inventory.items:
-                                    print(f"- {item}")
-                            else:
-                                print("The inventory is empty.")
-                        if obj_name == "portal":
+                        if obj_name == "portal": # If portal is clicked
+                            # Game win condition
                             game_state.unlock_door
                             display_win_screen(screen)
                             running = False
-                        if obj_name == "right":
-                            front_room.front(savestate, inventory)
-                        if obj_name == "left":
-                            right.right(savestate, inventory)
-            elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_ESCAPE:
-                    helper.pause_menu(screen, font, "savedata.txt", savestate, inventory)
-                if event.key == pygame.K_i:
-                    inventory.toggle_visibility()
-                if event.key == pygame.K_z:
-                    inventory.handle_input(event)
-                if event.key == pygame.K_x:
-                    if blender_clicked == True:
-                        inventory.handle_input(event)
-                        if {"Thing 1/2", "Thing 2/2"}.issubset(inventory.selected_items):
-                            savestate[4] = 1
+                        if obj_name == "right": # If right arrow is clicked
+                            front_room.front(savestate, inventory) # Go to the front room
+                        if obj_name == "left": # If left arrow is clicked
+                            right.right(savestate, inventory) # Go to the right room
+            elif event.type == pygame.KEYDOWN: # If a key is pressed
+                if event.key == pygame.K_ESCAPE: # If ESC is pressed
+                    helper.pause_menu(screen, font, "savedata.txt", savestate, inventory) # Show the pause menu
+                if event.key == pygame.K_i: # If i is pressed
+                    inventory.toggle_visibility() # Show or hide the inventory
+                if event.key == pygame.K_z: # If z is pressed
+                    inventory.handle_input(event) # Handle the input for inventory
+                if event.key == pygame.K_x: # If x is pressed
+                    if blender_clicked == True: # If the blender was clicked
+                        inventory.handle_input(event) # Handle the input for inventory
+                        if {"Thing 1/2", "Thing 2/2"}.issubset(inventory.selected_items): # If Thing 1/2 and Thing 2/2 are selected
+                            savestate[4] = 1 # Portal shows up
+                            # Create object for portal and update background
                             objects["portal"] = pygame.Rect(300, 150, 210, 550)
                             room_image = pygame.image.load("Images/ExitHole.jpg") 
                             room_image = pygame.transform.scale(room_image, (WIDTH, HEIGHT))
+                            # Remove used items
                             inventory.remove_item("Thing 1/2")
                             inventory.remove_item("Thing 2/2")
 
