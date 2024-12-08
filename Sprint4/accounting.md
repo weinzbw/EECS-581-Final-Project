@@ -105,11 +105,17 @@ Ben Weinzirl
 * Updated blender logic
 * Ensured all room backgrounds get updated as savestate updates
 
-12/8/2024 - 0.5h
+12/8/2024 - 3h
 
 * Added intermediate frame to carpet being destroyed
 * Updated comments
 * Updates helper.py to work with current savestate data
+* Implemented Naran's timer to all screens
+* Added Naran's updated win_lose.py
+* Updated savedata to work with game timer
+* Added interaction texts when hovering over objects
+* Removed transparent boxes from front and back rooms
+* Updated the credits
 
 ---
 

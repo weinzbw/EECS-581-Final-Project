@@ -6,6 +6,7 @@ Date Made: 11/27/2024
 Date(s) Revised:
 12/02/2024: Added Inventory from Sam
 12/07/2024: Updated Inventory for Sam's Task #5 from Sam
+12/08/2024: Refixed not showing full inventory item name
 Preconditions: Does not involve input or output
 Postconditions: No differing return values
 Errors/Exceptions: No intended errors/exceptions
@@ -107,9 +108,22 @@ class Inventory:
             if item in self.selected_items:
                 display_text += " *"
 
-            item_text = font.render(display_text, True, (255, 255, 255))
+            # task 5 update
+            font_size = self.font_size
+            temp_font = pygame.font.SysFont("Courier New", font_size)
+            item_text = temp_font.render(display_text, True, (255, 255, 255))
+
+            max_width = width - 20
+
+            while item_text.get_width() > max_width and font_size > 8:
+                font_size -= 1
+                temp_font = pygame.font.SysFont("Courier New", font_size)
+                item_text = temp_font.render(display_text, True, (255, 255, 255))
+
+
             inventory_surface.blit(item_text, (10, y_offset))
             y_offset += self.font_size + self.padding
+
         screen.blit(inventory_surface, (screen.get_width() - width - 20, 20))
 
     def handle_input(self, event):

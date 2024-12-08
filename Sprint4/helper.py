@@ -9,7 +9,7 @@ Date(s) Revised:
 11/23/2024: Added Mick's pause menu addition
 12/2/2024: Updated saving for Inventory Class
 12/7/2024: Deleted "state" variable
-12/8/2024: Updated Load Save to function with all savestates
+12/8/2024: Updated Load Save to function with all savestates and with game time
 Preconditions: Does not involve input or output
 Postconditions: No differing return values
 Errors/Exceptions: No intended errors/exceptions
@@ -22,10 +22,12 @@ import pygame
 import sys
 import front_room
 from objects import Inventory
+import win_lose
 #pygame.mixer.init()  # ADDED
 
-def handle_save(path):
+def handle_save(path, game_state):
     with open(path, "r") as save:
+        game_state.timer = win_lose.GameTimer(float(save.readline()))
         savestate = save.read().splitlines()
         try:
             savestate[0]
@@ -45,16 +47,17 @@ def handle_save(path):
     
     return savestate
 
-def save_state(savestate, inventory: Inventory):
+def save_state(game_state, savestate, inventory: Inventory):
     with open("savedata.txt", "w") as save:
+        save.write(str(game_state.timer.time_remaining()) + "\n")
         for line in savestate:
             save.write(str(line) + "\n")
         for item in inventory.items:
             save.write(str(f"{item}\n"))
 
-def pause_menu(window, font, save_path, savestate, inventory):
+def pause_menu(window, font, save_path, game_state, savestate, inventory):
 
-    save_state(savestate, inventory)
+    save_state(game_state, savestate, inventory)
     """Displays the pause menu and handles interactions using helper functions."""
     running = True
     menu_items = ["Load Save", "Delete Save", "Save and Exit"]
@@ -87,16 +90,17 @@ def pause_menu(window, font, save_path, savestate, inventory):
                 elif event.key == pygame.K_RETURN:
                     # Handle menu selection
                     if menu_items[selected_index] == "Load Save":
-                        savestate[:] = handle_save(save_path)  # Reload the savestate
-                        front_room.front(savestate, inventory)
+                        savestate[:] = handle_save(save_path, game_state)  # Reload the savestate
+                        front_room.front(game_state, savestate, inventory)
                         running = False
                     elif menu_items[selected_index] == "Delete Save":
                         savestate = [0, 0, 0, 0, 0]  # Reset current state
                         inventory = Inventory()
-                        front_room.front(savestate, inventory)
+                        game_state.timer = win_lose.GameTimer(5*60)
+                        front_room.front(game_state, savestate, inventory)
                         running = False
                     elif menu_items[selected_index] == "Save and Exit":
-                        save_state(savestate, inventory)  # Save current state
+                        save_state(game_state, savestate, inventory)  # Save current state
                         pygame.quit()
                         sys.exit()
                 elif event.key == pygame.K_ESCAPE:

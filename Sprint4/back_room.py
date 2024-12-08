@@ -9,6 +9,7 @@ Date(s) Revised:
 12/1/2024: Updated art
 12/2/2024: Added Inventory Class Initalization. Removed left room from rotation
 12/7/2024: Deleted "state" variable, added Sam's work on Task #5 for the blender, added portal and winning
+12/8/2024: Added interaction texts when hovering over items and removed transparent boxes
 Preconditions: Requires a JPEG image located in the same directory as the program.
 Postconditions: A graphical window displaying the room background with interactive objects. Users can hover and click on objects to see visual feedback
 Errors/Exceptions: No intended errors/exceptions
@@ -23,7 +24,7 @@ import right
 import front_room
 import helper
 from objects import Inventory
-from win_lose import GameState, display_win_screen
+import win_lose
 
 pygame.init()
 
@@ -54,24 +55,32 @@ objects = {
     "right": rightRect
 }
 
-# Colors
-HIGHLIGHT_COLOR = (255, 255, 0)
-TRANSPARENT_COLOR = (0, 0, 255, 100)
-
-# Function to draw a transparent overlay on a rectangle
-def draw_transparent_overlay(rect, color):
-    overlay = pygame.Surface((rect.width, rect.height), pygame.SRCALPHA) 
-    overlay.fill(color)
-    screen.blit(overlay, rect.topleft)
-
+def handle_hover(obj, savestate, inventory):
+    if obj == "fridge":
+        return "No time for snacking..."
+    elif obj == "blender":
+        return "Mixing everything into one, my favorite passtime"
+    elif obj == "left":
+        return "Go to the Right Room"
+    elif obj == "right":
+        return "Go to the Front Room"
+    
 # Main loop
-def back(savestate, inventory):
+def back(game_state, savestate, inventory):
     clock = pygame.time.Clock()
     pygame.display.set_caption("Back Room")
 
+    # Check win/fail conditions
+    status = game_state.update()
+    if status == "win":
+        win_lose.display_win_screen(screen)
+        running = False
+    elif status == "fail":
+        win_lose.display_fail_screen(screen)
+        running = False
+
     # Initialize blender task variables
     blender_clicked = False
-    game_state = GameState()
 
     # Determine room background based on savestate
     room_image = pygame.image.load("Images/back room.JPG")
@@ -80,11 +89,15 @@ def back(savestate, inventory):
     if int(savestate[4]) == 1: # If blender task complete
         room_image = pygame.image.load("Images/ExitHole.jpg") 
         room_image = pygame.transform.scale(room_image, (WIDTH, HEIGHT))
-    
+
     running = True
     while running:
         # Clear the screen
         screen.blit(room_image, (0, 0))
+
+        # Display the countdown timer
+        win_lose.display_timer(screen, game_state.timer)
+            
         screen.blit(left_image, leftRect)
         screen.blit(right_image, rightRect)
 
@@ -100,13 +113,7 @@ def back(savestate, inventory):
         # Draw objects
         for obj_name, obj_rect in objects.items():
             if obj_rect.collidepoint(mouse_pos):
-                # Highlight object when hovering
-                draw_transparent_overlay(obj_rect, HIGHLIGHT_COLOR + (100,))  
-                interaction_text = f"You are hovering over the {obj_name}."
-            else:
-                # Transparent object when not hovering
-                draw_transparent_overlay(obj_rect, TRANSPARENT_COLOR)
-
+                interaction_text = handle_hover(obj_name, savestate, inventory)
         # Event handling
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -122,15 +129,15 @@ def back(savestate, inventory):
                         if obj_name == "portal": # If portal is clicked
                             # Game win condition
                             game_state.unlock_door
-                            display_win_screen(screen)
+                            win_lose.display_win_screen(screen)
                             running = False
                         if obj_name == "right": # If right arrow is clicked
-                            front_room.front(savestate, inventory) # Go to the front room
+                            front_room.front(game_state, savestate, inventory) # Go to the front room
                         if obj_name == "left": # If left arrow is clicked
-                            right.right(savestate, inventory) # Go to the right room
+                            right.right(game_state, savestate, inventory) # Go to the right room
             elif event.type == pygame.KEYDOWN: # If a key is pressed
                 if event.key == pygame.K_ESCAPE: # If ESC is pressed
-                    helper.pause_menu(screen, font, "savedata.txt", savestate, inventory) # Show the pause menu
+                    helper.pause_menu(screen, font, "savedata.txt", game_state, savestate, inventory) # Show the pause menu
                 if event.key == pygame.K_i: # If i is pressed
                     inventory.toggle_visibility() # Show or hide the inventory
                 if event.key == pygame.K_z: # If z is pressed
@@ -148,15 +155,16 @@ def back(savestate, inventory):
                             inventory.remove_item("Thing 1/2")
                             inventory.remove_item("Thing 2/2")
 
-        # Display text
+        # Display interaction text
         text_surface = font.render(interaction_text, True, (0, 0, 0))
-        screen.blit(text_surface, (20, 20))
+        text_rect = text_surface.get_rect(center=(800 // 2, 600 - 30))
+        screen.blit(text_surface, text_rect)
 
         # Update display
         pygame.display.flip()
         clock.tick(30) # Cap the frame rate
 
     # Quit Pygame
-    helper.save_state(savestate, inventory)
+    helper.save_state(game_state, savestate, inventory)
     pygame.quit()
     sys.exit()

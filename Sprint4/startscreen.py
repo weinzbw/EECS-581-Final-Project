@@ -28,6 +28,7 @@ import os
 from front_room import front
 import helper
 import objects
+import win_lose
 
 pygame.font.init()
 pygame.init()
@@ -76,29 +77,32 @@ def draw_button(text, x, y, width, height, inactive_color, active_color, action=
 
 # Function to start new game
 def start_game():
+    game_state = win_lose.GameState()
     file_path = "savedata.txt"
 
     if os.path.exists(file_path): # IF save exists
         open(file_path, "w").close() # Delete contents
     inventory = objects.Inventory()
     
-    front([0,0,0,0,0], inventory) # Start new session
+    front(game_state, [0,0,0,0,0], inventory) # Start new session
 
 # Function to load game from save
 def load_save():
+
+    game_state = win_lose.GameState()
     file_path = "savedata.txt"
 
     if os.path.exists(file_path): # If save exists
-        savestate = helper.handle_save(file_path)
+        savestate = helper.handle_save(file_path, game_state)
         inventory = objects.Inventory()
-        i = 5 # Number of non-inventory variables stored in save
+        i = 6 # Number of non-inventory variables stored in save
         while i < len(savestate): # Iterate through inventory
             inventory.add_item(str(savestate[i])) # Add saved items to inventory
             i += 1
-        front(savestate, inventory) # Launch saved session
+        front(win_lose.GameState, savestate, inventory) # Launch saved session
     else: # If save does not exist
         inventory = objects.Inventory() 
-        front([0, 0, 0, 0, 0], inventory) # Start new session
+        front(win_lose.GameState(), [0, 0, 0, 0, 0], inventory) # Start new session
         pass
 
 # Main function

@@ -14,7 +14,7 @@ Date(s) Revised:
 12/2/2024: Added Inventory Class Initalization. Removed left room from rotation
 12/3/2024: Added Uno Reverse Card to printer
 12/7/2024: Deleted "state" variable, added fan and cellar objects, added more savestate variables (carpet gets destroyed by ceiling fan)
-12/8/2024: Added intermediate frame to carpet getting destroyed
+12/8/2024: Added intermediate frame to carpet getting destroyed. Added interaction texts when hovering over items and removed transparent boxes
 Preconditions: Requires a JPEG image located in the same directory as the program.
 Postconditions: A graphical window displaying the room background with interactive objects. Users can hover and click on objects to see visual feedback
 Errors/Exceptions: No intended errors/exceptions
@@ -69,9 +69,6 @@ objects = {
 HIGHLIGHT_COLOR = (255, 255, 0)
 TRANSPARENT_COLOR = (0, 0, 255, 100)
 
-# Initialize game state
-game_state = win_lose.GameState() # 1-hour timer and locked door initially
-
 # this loads the computer screen itself
 computer_view_image = pygame.image.load("Images/computer_view.png")
 scaled_computer_view_image = pygame.transform.scale(computer_view_image, (WIDTH, HEIGHT))
@@ -123,14 +120,40 @@ def draw_transparent_overlay(rect, color):
     overlay = pygame.Surface((rect.width, rect.height), pygame.SRCALPHA) 
     overlay.fill(color)
     screen.blit(overlay, rect.topleft)
-    screen.blit(left_image, leftRect)
-    screen.blit(right_image, rightRect)
 
-def handle_hover(obj):
-    pass
+def handle_hover(obj, savestate, inventory):
+    if obj == "computer":
+        if int(savestate[0]) == 0:
+            return "Turn on the computer?"
+        elif int(savestate[1]) == 0:
+            return "Continue playing?"
+        else:
+            return "That's enough gaming for now"
+    elif obj == "keyboard":
+        return "Tip tap type"
+    elif obj == "printer":
+        if not "Uno Reverse Card" in inventory.items and savestate[3] == 0:
+            return "It looks like something is in here"
+        return "Out of ink"
+    elif obj == "fan":
+        return "It is chilly in here. I wish it was the opposite"
+    elif obj == "cellar":
+        if savestate[3] == 0:
+            return "What a lovely rug. It really puts the room together"
+        elif savestate[3] == 1:
+            return "Was this here the whole time?"
+        elif savestate[3] == 2:
+            if not "Thing 2/2" in inventory.items and savestate[4] == 0:
+                return "There's a thing in here!"
+            else:
+                return "I'm not going down there"
+    elif obj == "right":
+        return "Go to the Right Room"
+    elif obj == "left":
+        return "Go to the Back Room"
 
 # Function whenver the player is on the computer screen
-def computer(savestate, computer_unlocked, chess_completed):
+def computer(game_state, savestate, computer_unlocked, chess_completed):
     # block of variables for the progress bar; it starts at the pixel of the top-left corner of the progress bar
     progress_start_x = fakebar_position[0] + 44
     progress_start_y = fakebar_position[1] + 32
@@ -143,6 +166,9 @@ def computer(savestate, computer_unlocked, chess_completed):
     running = True
     while running:
         screen.blit(scaled_computer_view_image, (0, 0))
+
+        # Display the countdown timer
+        win_lose.display_timer(screen, game_state.timer)
 
         # displays the loading bar until you unlock the computer; it needs to be removed when the task is complete
         if not computer_unlocked:
@@ -201,7 +227,7 @@ def computer(savestate, computer_unlocked, chess_completed):
     return savestate
 
 # Main loop
-def front(savestate, inventory: Inventory):
+def front(game_state, savestate, inventory: Inventory):
 
     # Determines which background to use based on savestate
     room_image = pygame.image.load("Images/RealFront.jpg") 
@@ -233,6 +259,8 @@ def front(savestate, inventory: Inventory):
 
         # Clear the screen and display room image
         screen.blit(room_image, (0, 0))
+        screen.blit(left_image, leftRect)
+        screen.blit(right_image, rightRect)
 
         if inventory.visible:
             inventory.draw(screen)
@@ -243,14 +271,8 @@ def front(savestate, inventory: Inventory):
         # Draw objects with hover effects
         for obj_name, obj_rect in objects.items():
             if obj_rect.collidepoint(mouse_pos):
-                # Highlight object when hovering
-                draw_transparent_overlay(obj_rect, HIGHLIGHT_COLOR + (100,))
-                handle_hover(obj_name)
-                interaction_text = f"You are hovering over the {obj_name}."
+                interaction_text = handle_hover(obj_name, savestate, inventory)
                 interaction_time = time.time()
-            else:
-                # Transparent overlay when not hovering
-                draw_transparent_overlay(obj_rect, TRANSPARENT_COLOR)
 
         # Event handling
         for event in pygame.event.get():
@@ -261,12 +283,8 @@ def front(savestate, inventory: Inventory):
                 for obj_name, obj_rect in objects.items():
                     if obj_rect.collidepoint(mouse_pos):
 
-                        # Default Interaction
-                        interaction_text = f"You clicked on the {obj_name}."
-                        interaction_time = time.time()
-
                         if obj_name == "computer": # If computer clicked
-                            savestate = computer(savestate, int(savestate[0]), int(savestate[1])) # Run the computer function
+                            savestate = computer(game_state, savestate, int(savestate[0]), int(savestate[1])) # Run the computer function
 
                         if obj_name == "keyboard": # If keyboard clicked
                             if "Extremely Tiny Crowbar" in inventory.items: # If player has Extremely Tiny Crowbar
@@ -309,14 +327,14 @@ def front(savestate, inventory: Inventory):
                                 room_image = pygame.transform.scale(room_image, (WIDTH, HEIGHT))
 
                         if obj_name == "left": # If left arrow clicked
-                            back_room.back(savestate, inventory) # Go to the back room
+                            back_room.back(game_state, savestate, inventory) # Go to the back room
 
                         if obj_name == "right": # If right arrow clicked
-                            right.right(savestate, inventory) # Go to the right room
+                            right.right(game_state, savestate, inventory) # Go to the right room
 
             elif event.type == pygame.KEYDOWN: # If a key is pressed
                 if event.key == pygame.K_ESCAPE: # If the ESC key is pressed
-                    helper.pause_menu(screen, font, "savedata.txt", savestate, inventory) # Show the pause menu
+                    helper.pause_menu(screen, font, "savedata.txt", game_state, savestate, inventory) # Show the pause menu
                 if event.key == pygame.K_i: # If i is pressed
                     inventory.toggle_visibility() # Show or hide the inventory
 
@@ -336,6 +354,6 @@ def front(savestate, inventory: Inventory):
         clock.tick(30)  # Cap the frame rate
 
     # Quit Pygame when loop ends
-    helper.save_state(savestate, inventory)
+    helper.save_state(game_state, savestate, inventory)
     pygame.quit()
     sys.exit()

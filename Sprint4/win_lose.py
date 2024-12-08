@@ -9,7 +9,7 @@ Postconditions: Win and loss conditions are properly displayed. Countdown timer 
 Errors/Exceptions: None explicitly handled
 Side Effects: Rendering win/lose screens and the countdown timer
 Invariants: The countdown timer should consistently update and display time
-Known Faults: Timer precision may be slightly affected by Pygame's frame rate
+Known Faults: N/A
 """
 
 import pygame
@@ -38,7 +38,7 @@ class GameTimer:
 
 class GameState:
     def __init__(self):
-        self.timer = GameTimer(3600)  # 1-hour timer
+        self.timer = GameTimer(5*60)  # 5 minute timer
         self.door_unlocked = False
 
     def unlock_door(self):
@@ -58,22 +58,106 @@ class GameState:
             return "fail"
         return "ongoing"
 
-# Functions to display win and fail screens
 def display_win_screen(screen):
     screen.fill((0, 240, 0))  # Green background for win
     font = pygame.font.SysFont('Arial', 64)
     text = font.render("You Win!", True, (0, 0, 0))
-    screen.blit(text, (screen.get_width() // 2 - text.get_width() // 2, screen.get_height() // 2 - text.get_height() // 2))
-    pygame.display.update()
+    text_rect = text.get_rect(center=(screen.get_width() // 2, screen.get_height() // 2))
+    
+    # Pulsing animation
+    for scale in range(50, 101, 2):  # Scale from 50% to 100% size
+        scaled_font = pygame.font.SysFont('Arial', scale)
+        scaled_text = scaled_font.render("You Win!", True, (0, 0, 0))
+        scaled_rect = scaled_text.get_rect(center=(screen.get_width() // 2, screen.get_height() // 2))
+        screen.fill((0, 240, 0))  # Ensure the background stays consistent
+        screen.blit(scaled_text, scaled_rect)
+        pygame.display.update()
+        pygame.time.delay(30)  # Adjust for animation speed
+
+    # Flashing effect after pulsing
+    for _ in range(5):
+        screen.fill((0, 240, 0))  # Green background
+        pygame.display.update()
+        pygame.time.delay(150)
+        screen.blit(text, text_rect)
+        pygame.display.update()
+        pygame.time.delay(150)
+
     pygame.time.wait(3000)  # Show for 3 seconds
+    display_credits(screen)
+
 
 def display_fail_screen(screen):
     screen.fill((240, 0, 0))  # Red background for fail
     font = pygame.font.SysFont('Arial', 64)
     text = font.render("Time's Up! You Lose.", True, (0, 0, 0))
-    screen.blit(text, (screen.get_width() // 2 - text.get_width() // 2, screen.get_height() // 2 - text.get_height() // 2))
-    pygame.display.update()
+    text_rect = text.get_rect(center=(screen.get_width() // 2, screen.get_height() // 2))
+    
+    # Pulsing animation
+    for scale in range(50, 101, 2):  # Scale from 50% to 100% size
+        scaled_font = pygame.font.SysFont('Arial', scale)
+        scaled_text = scaled_font.render("Time's Up! You Lose.", True, (0, 0, 0))
+        scaled_rect = scaled_text.get_rect(center=(screen.get_width() // 2, screen.get_height() // 2))
+        screen.fill((240, 0, 0))  # Ensure the background stays consistent
+        screen.blit(scaled_text, scaled_rect)
+        pygame.display.update()
+        pygame.time.delay(30)  # Adjust for animation speed
+
+    # Flashing effect after pulsing
+    for _ in range(5):
+        screen.fill((240, 0, 0))  # Red background
+        pygame.display.update()
+        pygame.time.delay(150)
+        screen.blit(text, text_rect)
+        pygame.display.update()
+        pygame.time.delay(150)
+
     pygame.time.wait(3000)  # Show for 3 seconds
+    display_credits(screen)
+
+
+def display_credits(screen):
+    screen.fill((0, 0, 0))  # Black background for credits
+    font = pygame.font.SysFont('Arial', 36)
+    credits = [
+        "Made for EECS 581",
+        "",
+        "",
+        "Team 37",
+        "",
+        "Ben Weinzirl",
+        "",
+        "Del Endecott",
+        "",
+        "Mick Torres",
+        "",
+        "Naran Bat",
+        "",
+        "Sam Harrison",
+        "",
+        "",
+        "",
+        "",
+        "Thank you for playing!",
+    ]
+
+    # Starting position for the text to scroll up
+    screen_height = screen.get_height()
+    y_offset = screen_height
+
+    # Scroll the credits
+    while y_offset > -len(credits) * 50:  # Ensure all text scrolls past the screen
+        screen.fill((0, 0, 0))  # Clear the screen each frame
+        for i, line in enumerate(credits):
+            text = font.render(line, True, (255, 255, 255))  # White text
+            text_rect = text.get_rect(center=(screen.get_width() // 2, y_offset + i * 50))
+            screen.blit(text, text_rect)
+        pygame.display.update()
+        pygame.time.delay(50)  # Adjust for scroll speed
+        y_offset -= 2  # Move text upward gradually
+
+    # Wait a moment at the end of the credits
+    pygame.time.wait(2000)
 
 # Function to display the countdown timer on the screen
 def display_timer(screen, timer):
