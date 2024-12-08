@@ -1,30 +1,39 @@
 Accounting of Person-Hours
 ---
-Team 10/18/24 - 2h
+Team 
 
-Worked on Initial Architecture Document
+10/18/24 - 2h
+
+* Worked on Initial Architecture Document
+
 10/19/24 - 4h
 
-Worked on Requirement Diagrams
+* Worked on Requirement Diagrams
 
 ---
 Ben Weinzirl
 
 10/22/24 - 1h
 
-* Initialized Github and created a sample title screen
+* Initialized Github
+* Created a sample title screen
 
 10/23/24 - 1h
 
-* Added header comments. Added helper.py for environments
+* Added header comments
+* Added helper.py for environments
 
 10/27/24 - 3h
 
-* Combined all previous work, fixed errors in code, updated stack requirements, ensured all code was up to the rubric's standard
+* Combined all previous work
+* Fixed errors in code
+* Updated stack requirements
+* Ensured all code was up to the rubric's standard
 
 11/5/24 - 3h
 
-* Created savedata for tasks, needs further improvement. Addded connections from mainscreen to front room, still a problem connecting front to tasks
+* Created savedata for tasks, needs further improvement
+* Added connections from mainscreen to front room, still a problem connecting front to tasks
 
 11/7/24 - 2.5h
 
@@ -40,18 +49,20 @@ Ben Weinzirl
 
 11/16/24 - 2.5h
 
-* Initialized sprint 3, fixe sprint 2 bugs, refactored some code to avoid using "global"
+* Initialized sprint 3, fixed sprint 2 bugs, refactored some code to avoid using "global"
 
 11/23/24 - 2.5h
 
-* Added Computer from main.py to frontroom.py and added save handling to startscreen to be passed to the game
+* Added Computer from main.py to frontroom.py
+* Added save handling to startscreen to be passed to the game
 * Added Mick's pause menu to helper.py
 
 11/24/24 - 3h
 
 * Added animation to title
 * Added Sam's chess fix
-* Connected all the rooms, ensured saving and the pause menu still worked
+* Connected all the rooms
+* Ensured saving and the pause menu still worked
 
 11/27/2024 - .5h
 
@@ -65,15 +76,28 @@ Ben Weinzirl
 
 12/2/2024 - .75h
 
-* Added Inventory Class from Sam and removed left.py from room rotation
+* Added Inventory Class from Sam
+* Removed left.py from room rotation
 
 12/3/2024 - 0.5h
 
-* Added Uno Reverse Card to front_room printer and updated hotspots in right.py
+* Added Uno Reverse Card to front_room printer
+* Updated hotspots in right.py
 
 12/4/2024 - 0.5h
 
-* Moved images to Images, fixed load and delete save for pause menu. Added Extremely Small Crowbar to items after completing chess and checking dresser in right.py
+* Moved images to Images
+* Fixed load and delete save for pause menu
+* Added Extremely Small Crowbar to items after completing chess and checking dresser in right.py
+
+12/7/2024 - 3h
+
+* Deleted "state" variable
+* Added Uno Reverse Card use to front_room
+* Added Sam's blender task to backroom
+* Updated Inventory with Sam's implementation
+* Added savestates to savestate/savedata to account for more gamestates
+* Added a win state
 
 ---
 

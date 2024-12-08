@@ -4,7 +4,8 @@ Description: Provide classes for GameObjects on each Room.
 Programmer(s): Ben Weinzirl, Sam Harrison
 Date Made: 11/27/2024
 Date(s) Revised:
-12/02/2024 - Added Inventory from Sam
+12/02/2024: Added Inventory from Sam
+12/07/2024: Updated Inventory for Sam's Task #5 from Sam
 Preconditions: Does not involve input or output
 Postconditions: No differing return values
 Errors/Exceptions: No intended errors/exceptions
@@ -71,6 +72,8 @@ class Inventory:
         self.visible = False
         self.font_size = font_size
         self.padding = padding
+        self.selected_index = 0
+        self.selected_items = set()
 
     def toggle_visibility(self):
         self.visible = not self.visible
@@ -99,18 +102,39 @@ class Inventory:
         inventory_surface.blit(title_text, (10, 10))
 
         y_offset = 40
-        for item in self.items:
-            font_size = self.font_size
-            temp_font = pygame.font.SysFont("Courier New", font_size)
-            item_text = temp_font.render(item, True, (255, 255, 255))
-            while item_text.get_width() > width - 20 and font_size > 8: 
-                font_size -= 1
-                temp_font = pygame.font.SysFont("Courier New", font_size)
-                item_text = temp_font.render(item, True, (255, 255, 255))
-            inventory_surface.blit(item_text, (10, y_offset))
-            y_offset += font_size + self.padding
+        for i, item in enumerate(self.items):
+            display_text = f"> {item}" if i == self.selected_index else item
+            if item in self.selected_items:
+                display_text += " *"
 
+            item_text = font.render(display_text, True, (255, 255, 255))
+            inventory_surface.blit(item_text, (10, y_offset))
+            y_offset += self.font_size + self.padding
         screen.blit(inventory_surface, (screen.get_width() - width - 20, 20))
+
+    def handle_input(self, event):
+        if not self.visible:
+            return
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_z:
+                self.selected_index = (self.selected_index + 1) % len(self.items)
+            if event.key == pygame.K_x:
+                if self.items:
+                    selected_item = self.items[self.selected_index]
+                    if selected_item in self.selected_items:
+                        self.selected_items.remove(selected_item)
+                    else:
+                        self.selected_items.add(selected_item)
+
+                    print("Currently selected items:")
+                    for item in self.selected_items:
+                        print(f"- {item}")
+
+                    if len(self.selected_items) == 4:
+                        print("Three items selected:")
+                        for item in self.selected_items:
+                            print(f"- {item}")
+                        self.selected_items.clear()
 
 """
 Example of adding subclasses to the GameObject class to specialize handle_click():

@@ -7,6 +7,7 @@ Date(s) Revised:
 11/24/2024: Added navigation
 12/1/2024: Updated art
 12/3/2024: Updated Hotspots
+12/7/2024: Deleted "state" variable
 Preconditions: No inputs or outputs
 Postconditions: No differing return values
 Errors/Exceptions: No intended errors/exceptions
@@ -51,31 +52,31 @@ class Hotspot:
         self.rect = pygame.Rect(x, y, width, height)
         self.action = action
 
-    def handle_click(self, pos, savestate, inventory, state):
+    def handle_click(self, pos, savestate, inventory):
         if self.rect.collidepoint(pos):
-            self.action(savestate, inventory, state)
+            self.action(savestate, inventory)
 
 # Actions for each hotspot
-def monitor_action(savestate, inventory, state):
+def monitor_action(savestate, inventory):
     print("Monitor clicked! Display possible information or clues.")
 
-def printer_action(savestate, inventory, state):
+def printer_action(savestate, inventory):
     print("Printer clicked! Perhaps it prints something useful.")
 
-def dresser_action(savestate, inventory, state):
+def dresser_action(savestate, inventory):
     if savestate[1] == "1" and "Extremely Tiny Crowbar" not in inventory.items:
         inventory.add_item("Extremely Tiny Crowbar")
     else:
         print("Dresser clicked! Maybe it hides something inside.")
 
-def safe_action(savestate, inventory, state):
+def safe_action(savestate, inventory):
     print("Safe clicked! Requires a code to open.")
 
-def left_action(savestate, inventory, state):
-    front_room.front(savestate, inventory, state)
+def left_action(savestate, inventory):
+    front_room.front(savestate, inventory)
 
-def right_action(savestate, inventory, state):
-    back_room.back(savestate, inventory, state)
+def right_action(savestate, inventory):
+    back_room.back(savestate, inventory)
 
 class RightRoom(objects.Room):
     def __init__(self):
@@ -94,16 +95,18 @@ class RightRoom(objects.Room):
         # Draw the background
         surface.blit(image, (0, 0))
 
-    def handle_click(self, pos, savestate, inventory, state):
+    def handle_click(self, pos, savestate, inventory):
         for hotspot in self.hotspots:
-            hotspot.handle_click(pos, savestate, inventory, state)
+            hotspot.handle_click(pos, savestate, inventory)
 
 # Main function to display the front room, compatible with main.py
-def right(savestate, inventory, state):
+def right(savestate, inventory):
 
     background_image = pygame.image.load('Images/right room.JPG')
     background_image = pygame.transform.scale(background_image, (800, 600))
     if savestate[1] == "1": # Check if chess is complete
+        if savestate[2] == "1":
+            background_image = pygame.image.load('Images/RightSageOpen.jpg')
         background_image = pygame.image.load('Images/RightRoomOpenDresser.jpg')
         background_image = pygame.transform.scale(background_image, (800, 600))
 
@@ -125,15 +128,15 @@ def right(savestate, inventory, state):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
-                helper.save_state(savestate, inventory, state)
+                helper.save_state(savestate, inventory)
                 pygame.quit()
                 sys.exit()
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 pos = pygame.mouse.get_pos()
-                right_room_instance.handle_click(pos, savestate, inventory, state)
+                right_room_instance.handle_click(pos, savestate, inventory)
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
-                    helper.pause_menu(screen, font, "savedata.txt", savestate, inventory, state)
+                    helper.pause_menu(screen, font, "savedata.txt", savestate, inventory)
                 if event.key == pygame.K_i:
                     inventory.toggle_visibility()
 

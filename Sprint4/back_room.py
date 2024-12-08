@@ -8,6 +8,7 @@ Date(s) Revised:
 11/24/2024: Added navigation
 12/1/2024: Updated art
 12/2/2024: Added Inventory Class Initalization. Removed left room from rotation
+12/7/2024: Deleted "state" variable, added Sam's work on Task #5 for the blender, added portal and winning
 Preconditions: Requires a JPEG image located in the same directory as the program.
 Postconditions: A graphical window displaying the room background with interactive objects. Users can hover and click on objects to see visual feedback
 Errors/Exceptions: No intended errors/exceptions
@@ -22,6 +23,7 @@ import right
 import front_room
 import helper
 from objects import Inventory
+from win_lose import GameState, display_win_screen
 
 pygame.init()
 
@@ -31,8 +33,6 @@ screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Back View")
 
 # Load room image
-room_image = pygame.image.load("Images/back room.JPG") 
-room_image = pygame.transform.scale(room_image, (WIDTH, HEIGHT))
 left_image = pygame.image.load("Images/left_arrow_white.png")
 right_image = pygame.image.load("Images/right_arrow_white.png")
 left_image = pygame.transform.scale(left_image, (50, 50))
@@ -65,9 +65,20 @@ def draw_transparent_overlay(rect, color):
     screen.blit(overlay, rect.topleft)
 
 # Main loop
-def back(savestate, inventory, state):
+def back(savestate, inventory):
     clock = pygame.time.Clock()
     pygame.display.set_caption("Back Room")
+
+    # task 5
+    blender_clicked = False
+    game_state = GameState()
+
+    room_image = pygame.image.load("Images/back room.JPG")
+    room_image = pygame.transform.scale(room_image, (WIDTH, HEIGHT))
+
+    if int(savestate[3]) == 1:
+        room_image = pygame.image.load("Images/ExitHole.jpg") 
+        room_image = pygame.transform.scale(room_image, (WIDTH, HEIGHT))
     running = True
     while running:
         # Clear the screen
@@ -77,7 +88,6 @@ def back(savestate, inventory, state):
 
         if inventory.visible:
             inventory.draw(screen)
-
 
         # Get mouse position
         mouse_pos = pygame.mouse.get_pos()
@@ -101,15 +111,46 @@ def back(savestate, inventory, state):
                 for obj_name, obj_rect in objects.items():
                     if obj_rect.collidepoint(mouse_pos):
                         interaction_text = f"You clicked on the {obj_name}."
+                        # adding functionality of task 5
+                        if obj_name == "blender":
+                            print("hi")
+                            blender_clicked = True
+                            # Print all items in the inventory
+                            if inventory.items:
+                                print("Inventory items:")
+                                for item in inventory.items:
+                                    print(f"- {item}")
+                            else:
+                                print("The inventory is empty.")
+                        if obj_name == "portal":
+                            game_state.unlock_door
+                            display_win_screen()
                         if obj_name == "right":
-                            front_room.front(savestate, inventory, state)
+                            front_room.front(savestate, inventory)
                         if obj_name == "left":
-                            right.right(savestate, inventory, state)
+                            right.right(savestate, inventory)
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
-                    helper.pause_menu(screen, font, "savedata.txt", savestate, inventory, state)
+                    helper.pause_menu(screen, font, "savedata.txt", savestate, inventory)
                 if event.key == pygame.K_i:
                     inventory.toggle_visibility()
+                if event.key == pygame.K_z:
+                    inventory.handle_input(event)
+                if event.key == pygame.K_l:
+                    inventory.add_item("This Thing")
+                    inventory.add_item("That Thing")
+                    inventory.add_item("The Final Thing")
+                if event.key == pygame.K_x:
+                    if blender_clicked == True:
+                        inventory.handle_input(event)
+                        if {"This Thing", "That Thing", "The Final Thing"}.issubset(inventory.selected_items):
+                            savestate[3] = 1
+                            objects["portal"] = pygame.Rect(300, 150, 210, 550)
+                            room_image = pygame.image.load("Images/ExitHole.jpg") 
+                            room_image = pygame.transform.scale(room_image, (WIDTH, HEIGHT))
+                            inventory.remove_item("This Thing")
+                            inventory.remove_item("That Thing")
+                            inventory.remove_item("The Final Thing")
 
         # Display text
         text_surface = font.render(interaction_text, True, (0, 0, 0))
@@ -120,6 +161,6 @@ def back(savestate, inventory, state):
         clock.tick(30) # Cap the frame rate
 
     # Quit Pygame
-    helper.save_state(savestate, inventory, state)
+    helper.save_state(savestate, inventory)
     pygame.quit()
     sys.exit()

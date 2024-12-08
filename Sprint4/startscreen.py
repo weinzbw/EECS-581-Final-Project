@@ -13,6 +13,7 @@ Date(s) Revised:
 11/24/24: Added title animation
 12/2/2024: Added Inventory Class Initialization
 12/3/2024: Fixed Load Save
+12/7/2024: Deleted "state" variable, added more states to savestate
 Preconditions: No inputs or outputs
 Postconditions: No differing return values
 Errors/Exceptions: No intended errors/exceptions
@@ -20,7 +21,7 @@ Side Effects: Creates a data.txt file that stores the save data of the user
 Invariants: Start Game button loads into a new save. Load game buttons loads a previous save.
 Known Faults: N/A
 """
-
+# Imports
 import pygame
 import sys
 import os
@@ -73,34 +74,36 @@ def draw_button(text, x, y, width, height, inactive_color, active_color, action=
     button_text = font.render(text, True, BLACK)
     screen.blit(button_text, (x + (width // 2 - button_text.get_width() // 2), y + (height // 2 - button_text.get_height() // 2)))
 
+# Function to start new game
 def start_game():
     file_path = "savedata.txt"
 
-    if os.path.exists(file_path):
-        open(file_path, "w").close()
+    if os.path.exists(file_path): # IF save exists
+        open(file_path, "w").close() # Delete contents
     inventory = objects.Inventory()
     
-    front([0,0], inventory, [])
+    front([0,0,0,0], inventory) # Start new session
+
+# Function to load game from save
 def load_save():
     file_path = "savedata.txt"
 
-    if os.path.exists(file_path):
+    if os.path.exists(file_path): # If save exists
         savestate = helper.handle_save(file_path)
-        state = []
         inventory = objects.Inventory()
-        i = 2
-        while i < len(savestate):
-            if savestate[i] not in inventory.items:
-                inventory.add_item(str(savestate[i]))
-                state.append(str(savestate[i]))
+        i = 4 # Number of non-inventory variables stored in save
+        while i < len(savestate): # Iterate through inventory
+            inventory.add_item(str(savestate[i])) # Add saved items to inventory
             i += 1
-        front(savestate, inventory, state)
-    else:
-        front([0, 0], [], [])
+        front(savestate, inventory) # Launch saved session
+    else: # If save does not exist
+        inventory = objects.Inventory() 
+        front([0, 0, 0, 0], inventory) # Start new session
         pass
-# Initialize Pygame
 
+# Main function
 def start():
+    # Stylistic choices for fonts and title
     screen.fill(WHITE)
 
     toptext = font.render('INCONVENIENT', True, BLACK)
@@ -109,7 +112,7 @@ def start():
     toptextRect = toptext.get_rect()
     bottomtextRect = bottomtext.get_rect()
 
-    count = 0
+    count = 0 # Set start for animation of title
 
     while True:
         screen.fill(WHITE)
@@ -124,8 +127,9 @@ def start():
         draw_button("Start Game", (screen_width - button_width) // 2, start_button_y, button_width, button_height, GRAY, DARK_GRAY, start_game)
         draw_button("Load Game", (screen_width - button_width) // 2, load_button_y, button_width, button_height, GRAY, DARK_GRAY, load_save)
 
-        if count == 0:
-            for i in range(400):
+        if count == 0: # Only run once
+            for i in range(400): # Iterate through pixel placements
+                # Move "INCONVENIENT" from left to right and "ESCAPE" from right to left
                 other_side = 800 - i
                 screen.fill(WHITE)
                 clock.tick(150)
@@ -135,7 +139,8 @@ def start():
                 screen.blit(bottomtext, bottomtextRect)
                 pygame.display.flip()
             count += 1
-        else:
+        else: # AFter running once
+            # Display normally``
             screen.blit(toptext, toptextRect)
             screen.blit(bottomtext, bottomtextRect)
 

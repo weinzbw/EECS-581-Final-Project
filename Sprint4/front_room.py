@@ -13,6 +13,7 @@ Date(s) Revised:
 11/27/2024: Removed task implementation
 12/2/2024: Added Inventory Class Initalization. Removed left room from rotation
 12/3/2024: Added Uno Reverse Card to printer
+12/7/2024: Deleted "state" variable, added fan and cellar objects, added more savestate variables (carpet gets destroyed by ceiling fan)
 Preconditions: Requires a JPEG image located in the same directory as the program.
 Postconditions: A graphical window displaying the room background with interactive objects. Users can hover and click on objects to see visual feedback
 Errors/Exceptions: No intended errors/exceptions
@@ -39,8 +40,6 @@ screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Front View")
 
 # Load room image
-room_image = pygame.image.load("Images/front_room.jpeg") 
-room_image = pygame.transform.scale(room_image, (WIDTH, HEIGHT))
 left_image = pygame.image.load("Images/left_arrow_white.png")
 right_image = pygame.image.load("Images/right_arrow_white.png")
 left_image = pygame.transform.scale(left_image, (50, 50))
@@ -58,6 +57,8 @@ interaction_text = ""
 objects = {
     "computer": pygame.Rect(120, 260, 100, 100),
     "printer": pygame.Rect(500, 280, 180, 110),
+    "fan": pygame.Rect(315, 5, 200, 75),
+    "cellar": pygame.Rect(100, 525, 575, 100),
     "right": rightRect,
     "left": leftRect
 }
@@ -122,6 +123,9 @@ def draw_transparent_overlay(rect, color):
     screen.blit(overlay, rect.topleft)
     screen.blit(left_image, leftRect)
     screen.blit(right_image, rightRect)
+
+def handle_hover(obj):
+    pass
 
 def computer(savestate, computer_unlocked, chess_completed):
     # block of variables for the progress bar; it starts at the pixel of the top-left corner of the progress bar
@@ -194,7 +198,18 @@ def computer(savestate, computer_unlocked, chess_completed):
     return savestate
 
 # Main loop
-def front(savestate, inventory: Inventory, state):
+def front(savestate, inventory: Inventory):
+    room_image = pygame.image.load("Images/RealFront.jpg") 
+    room_image = pygame.transform.scale(room_image, (WIDTH, HEIGHT))
+
+    if int(savestate[2]) == 1:
+        room_image = pygame.image.load("Images/DestroyedCarpet.jpg") 
+        room_image = pygame.transform.scale(room_image, (WIDTH, HEIGHT))
+
+    if int(savestate[2]) == 2:
+        room_image = pygame.image.load("Images/OpenFront.jpg") 
+        room_image = pygame.transform.scale(room_image, (WIDTH, HEIGHT))
+
     interaction_time = 0
 
     pygame.display.set_caption("Front Room")
@@ -225,6 +240,7 @@ def front(savestate, inventory: Inventory, state):
             if obj_rect.collidepoint(mouse_pos):
                 # Highlight object when hovering
                 draw_transparent_overlay(obj_rect, HIGHLIGHT_COLOR + (100,))
+                handle_hover(obj_name)
                 interaction_text = f"You are hovering over the {obj_name}."
                 interaction_time = time.time()
             else:
@@ -245,16 +261,27 @@ def front(savestate, inventory: Inventory, state):
                         if obj_name == "computer":
                             savestate = computer(savestate, int(savestate[0]), int(savestate[1]))
                         if obj_name == "printer":
-                            if "Uno Reverse Card" not in inventory.items:
+                            if "Uno Reverse Card" not in inventory.items and savestate[2] != int(1):
                                 inventory.add_item("Uno Reverse Card")
                             #game_state.unlock_door() # Set win state
+                        if obj_name == "fan" and "Uno Reverse Card" in inventory.items:
+                            savestate[2] = 1
+                            room_image = pygame.image.load("Images/DestroyedCarpet.jpg") 
+                            room_image = pygame.transform.scale(room_image, (WIDTH, HEIGHT))
+                            inventory.remove_item("Uno Reverse Card")
+                        if obj_name == "cellar":
+                            if int(savestate[2]) == 1:
+                                savestate[2] = 2
+                                room_image = pygame.image.load("Images/OpenFront.jpg") 
+                                room_image = pygame.transform.scale(room_image, (WIDTH, HEIGHT))
+
                         if obj_name == "left":
-                            back_room.back(savestate, inventory, state)
+                            back_room.back(savestate, inventory)
                         if obj_name == "right":
-                            right.right(savestate, inventory, state)
+                            right.right(savestate, inventory)
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
-                    helper.pause_menu(screen, font, "savedata.txt", savestate, inventory, state)
+                    helper.pause_menu(screen, font, "savedata.txt", savestate, inventory)
                 if event.key == pygame.K_i:
                     inventory.toggle_visibility()
 
@@ -274,6 +301,6 @@ def front(savestate, inventory: Inventory, state):
         clock.tick(30)  # Cap the frame rate
 
     # Quit Pygame when loop ends
-    helper.save_state(savestate, inventory, state)
+    helper.save_state(savestate, inventory)
     pygame.quit()
     sys.exit()
