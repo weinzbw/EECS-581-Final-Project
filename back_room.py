@@ -3,7 +3,7 @@ Program Name: front_room.py
 Description: Provide the back view of the room. Currently a template with placeholder image and object interaction.
 Programmer(s): Naran Bat
 Date Made: 10/27/2024
-Date(s) Revised: 
+Date(s) Revised: 12/7/24: Added Task 4
 10/27/2024: Added placeholder image and object interaction
 11/24/2024: Added navigation
 12/1/2024: Updated art
@@ -22,6 +22,8 @@ import right
 import front_room
 import helper
 from objects import Inventory
+from win_lose import GameState, display_win_screen
+
 
 pygame.init()
 
@@ -41,6 +43,11 @@ leftRect = left_image.get_rect()
 rightRect = right_image.get_rect()
 leftRect.center = (50, 300)
 rightRect.center = (750, 300)
+
+# task 5
+blender_clicked = False
+selected_set = set()
+game_state = GameState()
 
 # Define font
 font = pygame.font.SysFont(None, 36)
@@ -105,11 +112,46 @@ def back(savestate, inventory, state):
                             front_room.front(savestate, inventory, state)
                         if obj_name == "left":
                             right.right(savestate, inventory, state)
+                        # adding functionality of task 5
+                        if obj_name == "blender":
+                            print("hi")
+                            blender_clicked = True
+                            # Print all items in the inventory
+                            if inventory.items:
+                                print("Inventory items:")
+                                for item in inventory.items:
+                                    print(f"- {item}")
+                            else:
+                                print("The inventory is empty.")
+
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     helper.pause_menu(screen, font, "savedata.txt", savestate, inventory, state)
                 if event.key == pygame.K_i:
                     inventory.toggle_visibility()
+                # task 5
+                if event.key == pygame.K_z:
+                    inventory.handle_input(event)
+                if event.key == pygame.K_l:
+                    inventory.add_item("This Thing")
+                    inventory.add_item("That Thing")
+                    inventory.add_item("The Final Thing")
+                if event.key == pygame.K_x:
+                    if blender_clicked == True:
+                        print('test')
+                        inventory.handle_input(event)
+                        print(inventory.selected_items)
+                        if {"This Thing", "That Thing", "The Final Thing"}.issubset(inventory.selected_items):
+                            print("WOOHOO!")
+                            game_state.unlock_door()
+                            display_win_screen(screen)
+                            running = False 
+
+
+
+#if required_items.issubset(self.selected_items):
+   # print("The set contains items 1, 2, and 3.")
+                
 
         # Display text
         text_surface = font.render(interaction_text, True, (0, 0, 0))
