@@ -76,7 +76,7 @@ def back(savestate, inventory):
     room_image = pygame.image.load("Images/back room.JPG")
     room_image = pygame.transform.scale(room_image, (WIDTH, HEIGHT))
 
-    if int(savestate[3]) == 1:
+    if int(savestate[4]) == 1:
         room_image = pygame.image.load("Images/ExitHole.jpg") 
         room_image = pygame.transform.scale(room_image, (WIDTH, HEIGHT))
     running = True
@@ -85,6 +85,9 @@ def back(savestate, inventory):
         screen.blit(room_image, (0, 0))
         screen.blit(left_image, leftRect)
         screen.blit(right_image, rightRect)
+
+        if int(savestate[4]) == 1:
+            objects["portal"] = pygame.Rect(300, 150, 210, 550)
 
         if inventory.visible:
             inventory.draw(screen)
@@ -125,6 +128,7 @@ def back(savestate, inventory):
                         if obj_name == "portal":
                             game_state.unlock_door
                             display_win_screen(screen)
+                            running = False
                         if obj_name == "right":
                             front_room.front(savestate, inventory)
                         if obj_name == "left":
@@ -136,21 +140,16 @@ def back(savestate, inventory):
                     inventory.toggle_visibility()
                 if event.key == pygame.K_z:
                     inventory.handle_input(event)
-                if event.key == pygame.K_l:
-                    inventory.add_item("This Thing")
-                    inventory.add_item("That Thing")
-                    inventory.add_item("The Final Thing")
                 if event.key == pygame.K_x:
                     if blender_clicked == True:
                         inventory.handle_input(event)
-                        if {"This Thing", "That Thing", "The Final Thing"}.issubset(inventory.selected_items):
-                            savestate[3] = 1
+                        if {"Thing 1/2", "Thing 2/2"}.issubset(inventory.selected_items):
+                            savestate[4] = 1
                             objects["portal"] = pygame.Rect(300, 150, 210, 550)
                             room_image = pygame.image.load("Images/ExitHole.jpg") 
                             room_image = pygame.transform.scale(room_image, (WIDTH, HEIGHT))
-                            inventory.remove_item("This Thing")
-                            inventory.remove_item("That Thing")
-                            inventory.remove_item("The Final Thing")
+                            inventory.remove_item("Thing 1/2")
+                            inventory.remove_item("Thing 2/2")
 
         # Display text
         text_surface = font.render(interaction_text, True, (0, 0, 0))

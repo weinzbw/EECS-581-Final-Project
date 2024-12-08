@@ -90,7 +90,7 @@ Ben Weinzirl
 * Fixed load and delete save for pause menu
 * Added Extremely Small Crowbar to items after completing chess and checking dresser in right.py
 
-12/7/2024 - 3h
+12/7/2024 - 4h
 
 * Deleted "state" variable
 * Added Uno Reverse Card use to front_room
@@ -98,6 +98,12 @@ Ben Weinzirl
 * Updated Inventory with Sam's implementation
 * Added savestates to savestate/savedata to account for more gamestates
 * Added a win state
+* Added functionality for Crowbar on the Keyboard
+* Added functionality for Keyboard Key on the Safe
+* Added Thing 1/2 to the Safe
+* Added Thing 2/2 to the Cellar
+* Updated blender logic
+* Ensured all room backgrounds get updated as savestate updates
 
 ---
 

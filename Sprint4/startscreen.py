@@ -82,7 +82,7 @@ def start_game():
         open(file_path, "w").close() # Delete contents
     inventory = objects.Inventory()
     
-    front([0,0,0,0], inventory) # Start new session
+    front([0,0,0,0,0], inventory) # Start new session
 
 # Function to load game from save
 def load_save():
@@ -91,14 +91,14 @@ def load_save():
     if os.path.exists(file_path): # If save exists
         savestate = helper.handle_save(file_path)
         inventory = objects.Inventory()
-        i = 4 # Number of non-inventory variables stored in save
+        i = 5 # Number of non-inventory variables stored in save
         while i < len(savestate): # Iterate through inventory
             inventory.add_item(str(savestate[i])) # Add saved items to inventory
             i += 1
         front(savestate, inventory) # Launch saved session
     else: # If save does not exist
         inventory = objects.Inventory() 
-        front([0, 0, 0, 0], inventory) # Start new session
+        front([0, 0, 0, 0, 0], inventory) # Start new session
         pass
 
 # Main function

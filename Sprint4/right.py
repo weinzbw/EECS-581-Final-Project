@@ -13,7 +13,7 @@ Postconditions: No differing return values
 Errors/Exceptions: No intended errors/exceptions
 Side Effects: None
 Invariants: None
-Known Faults: Hitboxes for clicks is off. Need different background
+Known Faults: Keyboard Key sometimes doesn't go away after relaunch. Calling this module moves the windowed screen
 """
 
 import pygame
@@ -70,7 +70,13 @@ def dresser_action(savestate, inventory):
         print("Dresser clicked! Maybe it hides something inside.")
 
 def safe_action(savestate, inventory):
-    print("Safe clicked! Requires a code to open.")
+    if "Keyboard Key" in inventory.items:
+        savestate[2] = 1
+        inventory.remove_item("Keyboard Key")
+    elif int(savestate[2]) == 1 and "Thing 1/2" not in inventory.items:
+        inventory.add_item("Thing 1/2")
+    else:
+        print("Safe clicked! Requires a code to open.")
 
 def left_action(savestate, inventory):
     front_room.front(savestate, inventory)
@@ -104,11 +110,12 @@ def right(savestate, inventory):
 
     background_image = pygame.image.load('Images/right room.JPG')
     background_image = pygame.transform.scale(background_image, (800, 600))
-    if savestate[1] == "1": # Check if chess is complete
-        if savestate[2] == "1":
-            background_image = pygame.image.load('Images/RightSageOpen.jpg')
+    if int(savestate[1]) > 0: # Check if chess is complete
         background_image = pygame.image.load('Images/RightRoomOpenDresser.jpg')
         background_image = pygame.transform.scale(background_image, (800, 600))
+        if int(savestate[2]) == 1:
+            background_image = pygame.image.load('Images/RightSafeOpen.jpg')
+            background_image = pygame.transform.scale(background_image, (800, 600))
 
     screen = pygame.display.set_mode((800, 600))
     pygame.display.set_caption("Right Room")
@@ -120,6 +127,10 @@ def right(savestate, inventory):
         right_room_instance.draw(screen, background_image)
         screen.blit(left_image, leftRect)
         screen.blit(right_image, rightRect)
+
+        if int(savestate[2]) == 1:
+            background_image = pygame.image.load('Images/RightSafeOpen.jpg')
+            background_image = pygame.transform.scale(background_image, (800, 600))
 
         if inventory.visible:
             inventory.draw(screen)

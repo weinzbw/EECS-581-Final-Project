@@ -56,6 +56,7 @@ interaction_text = ""
 # Define objects
 objects = {
     "computer": pygame.Rect(120, 260, 100, 100),
+    "keyboard": pygame.Rect(100, 400, 100, 30),
     "printer": pygame.Rect(500, 280, 180, 110),
     "fan": pygame.Rect(315, 5, 200, 75),
     "cellar": pygame.Rect(100, 525, 575, 100),
@@ -202,11 +203,11 @@ def front(savestate, inventory: Inventory):
     room_image = pygame.image.load("Images/RealFront.jpg") 
     room_image = pygame.transform.scale(room_image, (WIDTH, HEIGHT))
 
-    if int(savestate[2]) == 1:
+    if int(savestate[3]) == 1:
         room_image = pygame.image.load("Images/DestroyedCarpet.jpg") 
         room_image = pygame.transform.scale(room_image, (WIDTH, HEIGHT))
 
-    if int(savestate[2]) == 2:
+    if int(savestate[3]) == 2:
         room_image = pygame.image.load("Images/OpenFront.jpg") 
         room_image = pygame.transform.scale(room_image, (WIDTH, HEIGHT))
 
@@ -260,18 +261,25 @@ def front(savestate, inventory: Inventory):
                         # If the monitor is clicked, unlock the door (win condition)
                         if obj_name == "computer":
                             savestate = computer(savestate, int(savestate[0]), int(savestate[1]))
+                        if obj_name == "keyboard":
+                            if "Extremely Tiny Crowbar" in inventory.items:
+                                savestate[1] = 2
+                                inventory.remove_item("Extremely Tiny Crowbar")
+                                inventory.add_item("Keyboard Key")
                         if obj_name == "printer":
-                            if "Uno Reverse Card" not in inventory.items and savestate[2] != int(1):
+                            if "Uno Reverse Card" not in inventory.items and not int(savestate[3]) > 0:
                                 inventory.add_item("Uno Reverse Card")
                             #game_state.unlock_door() # Set win state
                         if obj_name == "fan" and "Uno Reverse Card" in inventory.items:
-                            savestate[2] = 1
+                            savestate[3] = 1
                             room_image = pygame.image.load("Images/DestroyedCarpet.jpg") 
                             room_image = pygame.transform.scale(room_image, (WIDTH, HEIGHT))
                             inventory.remove_item("Uno Reverse Card")
                         if obj_name == "cellar":
-                            if int(savestate[2]) == 1:
-                                savestate[2] = 2
+                            if int(savestate[3]) == 2 and not "Thing 2/2" in inventory.items:
+                                inventory.add_item("Thing 2/2")
+                            if int(savestate[3]) == 1:
+                                savestate[3] = 2
                                 room_image = pygame.image.load("Images/OpenFront.jpg") 
                                 room_image = pygame.transform.scale(room_image, (WIDTH, HEIGHT))
 

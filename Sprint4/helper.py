@@ -31,14 +31,16 @@ def handle_save(path):
             savestate[1]
             savestate[2]
             savestate[3]
+            savestate[4]
         except:
-            savestate = [0, 0, 0, 0]
+            savestate = [0, 0, 0, 0, 0]
 
     with open(path, "w") as save:
         save.write(f"{savestate[0]}\n")
         save.write(f"{savestate[1]}\n")
         save.write(f"{savestate[2]}\n")
         save.write(f"{savestate[3]}\n")
+        save.write(f"{savestate[4]}\n")
     
     return savestate
 
