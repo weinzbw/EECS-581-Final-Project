@@ -99,10 +99,10 @@ def load_save():
         while i < len(savestate): # Iterate through inventory
             inventory.add_item(str(savestate[i])) # Add saved items to inventory
             i += 1
-        front(win_lose.GameState, savestate, inventory) # Launch saved session
+        front(game_state, savestate, inventory) # Launch saved session
     else: # If save does not exist
         inventory = objects.Inventory() 
-        front(win_lose.GameState(), [0, 0, 0, 0, 0], inventory) # Start new session
+        front(game_state, [0, 0, 0, 0, 0], inventory) # Start new session
         pass
 
 # Main function

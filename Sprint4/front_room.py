@@ -34,6 +34,7 @@ import back_room
 from objects import Inventory
 
 pygame.init()
+pygame.mixer.init()
 
 # Set up the display
 WIDTH, HEIGHT = 800, 600
@@ -223,15 +224,29 @@ def computer(game_state, savestate, computer_unlocked, chess_completed):
                     running = False  # closes computer view, so the player can see the drawer opening
                     chess_completed = True 
                     savestate[1] = "1"
+        text_surface = font.render("USE ARROW KEYS", True, (0, 0, 0))
+        text_rect = text_surface.get_rect(center=(WIDTH // 2, HEIGHT - 80))
+        screen.blit(text_surface, text_rect)
+
+        text_surface = font.render("ESC TO EXIT", True, (0, 0, 0))
+        text_rect = text_surface.get_rect(center=(WIDTH // 2, HEIGHT - 30))
+        screen.blit(text_surface, text_rect)
         pygame.display.flip()
     return savestate
 
 # Main loop
 def front(game_state, savestate, inventory: Inventory):
+    # load the sounds
+    pygame.mixer.Sound.set_volume(0.2)
+    computer_sound = pygame.mixer.Sound("sounds/computer.mp3")
+    printer_sound = pygame.mixer.Sound("sounds/printer.mp3")
 
     # Determines which background to use based on savestate
     room_image = pygame.image.load("Images/RealFront.jpg") 
     room_image = pygame.transform.scale(room_image, (WIDTH, HEIGHT))
+
+    thing2 = pygame.image.load("Images/Thing2.png")
+    thing2 = pygame.transform.scale(thing2, (50, 50))
 
     if int(savestate[3]) == 1: # If Uno Card Used
         room_image = pygame.image.load("Images/DestroyedCarpet.jpg") 
@@ -261,7 +276,8 @@ def front(game_state, savestate, inventory: Inventory):
         screen.blit(room_image, (0, 0))
         screen.blit(left_image, leftRect)
         screen.blit(right_image, rightRect)
-
+        if not "Thing 2/2" in inventory.items and savestate[3] == 2:
+            screen.blit(thing2, (380, 520))
         if inventory.visible:
             inventory.draw(screen)
 
@@ -284,10 +300,12 @@ def front(game_state, savestate, inventory: Inventory):
                     if obj_rect.collidepoint(mouse_pos):
 
                         if obj_name == "computer": # If computer clicked
+                            computer_sound.play()
                             savestate = computer(game_state, savestate, int(savestate[0]), int(savestate[1])) # Run the computer function
 
                         if obj_name == "keyboard": # If keyboard clicked
-                            if "Extremely Tiny Crowbar" in inventory.items: # If player has Extremely Tiny Crowbar
+                            if "Extremely Tiny Crowbar" in inventory.selected_items: # If player has Extremely Tiny Crowbar
+                                inventory.selected_items = set()
                                 savestate[1] = 2 # Player used the Crowbar
                                 inventory.remove_item("Extremely Tiny Crowbar")
                                 inventory.add_item("Keyboard Key") # Add Keyboard Key to inventory
@@ -295,9 +313,11 @@ def front(game_state, savestate, inventory: Inventory):
                         if obj_name == "printer": # If printer clicked
 
                             if "Uno Reverse Card" not in inventory.items and not int(savestate[3]) > 0: # IF the player hasn't collected or used the Uno Reverse Card
+                                printer_sound.play()
                                 inventory.add_item("Uno Reverse Card")
 
-                        if obj_name == "fan" and "Uno Reverse Card" in inventory.items: # If fan clicked and the player has Uno Reverse Card
+                        if obj_name == "fan" and "Uno Reverse Card" in inventory.selected_items: # If fan clicked and the player has Uno Reverse Card
+                            inventory.selected_items = set()
                             savestate[3] = 1 # Carpet is destroyed
 
                             # Show intermediate flame of carpet going to the fan
@@ -337,6 +357,15 @@ def front(game_state, savestate, inventory: Inventory):
                     helper.pause_menu(screen, font, "savedata.txt", game_state, savestate, inventory) # Show the pause menu
                 if event.key == pygame.K_i: # If i is pressed
                     inventory.toggle_visibility() # Show or hide the inventory
+                if event.key == pygame.K_UP or event.key == pygame.K_DOWN: # If up or down arrows are pressed
+                    inventory.handle_input(event) # Handle the input for inventory
+                if int(savestate[4]) == 0:
+                    if event.key == pygame.K_RETURN: # If Enter is pressed
+                        inventory.handle_input(event) # Handle the input for inventory
+                        if len(inventory.selected_items) > 1:
+                            print(inventory.selected_items)
+                            inventory.selected_items = set()
+                            print(inventory.selected_items)
 
         # Check if interaction text should be cleared after 2 seconds
         if time.time() - interaction_time > 2:

@@ -105,7 +105,7 @@ Ben Weinzirl
 * Updated blender logic
 * Ensured all room backgrounds get updated as savestate updates
 
-12/8/2024 - 3h
+12/8/2024 - 5h
 
 * Added intermediate frame to carpet being destroyed
 * Updated comments
@@ -116,6 +116,10 @@ Ben Weinzirl
 * Added interaction texts when hovering over objects
 * Removed transparent boxes from front and back rooms
 * Updated the credits
+* Added back sounds
+* Changed how items are used (use arrow keys and enter)
+* Added help to pause menu
+* Updated README
 
 ---
 

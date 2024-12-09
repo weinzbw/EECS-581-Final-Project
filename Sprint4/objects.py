@@ -16,8 +16,9 @@ Known Faults: N/A
 """
 import pygame
 
-#pygame.mixer.init()  # ADDED
+pygame.mixer.init()  # ADDED
 
+# Define Room class
 class Room:
     def __init__(self):
         self.objects = []
@@ -40,6 +41,7 @@ class Room:
             if obj.rect.collidepoint(pos):
                 obj.handle_click()
 
+# Define GameObject class
 class GameObject:
     def __init__(self, x, y, image, sound=None):
         self.x = x
@@ -67,29 +69,35 @@ class GameObject:
             print(f"Failed to load sound: {file_path}, Error: {e}")  # ADDED
             return None  # ADDED
 
+# Define Inventory class
 class Inventory:
     def __init__(self, items=None, font_size=24, padding=10):
         self.items = items if items else []
-        self.visible = False
+        self.visible = True
         self.font_size = font_size
         self.padding = padding
         self.selected_index = 0
         self.selected_items = set()
 
+    # Change whether or not the inventory is shown
     def toggle_visibility(self):
         self.visible = not self.visible
 
+    # Add an item to the inventory
     def add_item(self, item):
         self.items.append(item)
 
+    # Remove an item from the inventory
     def remove_item(self, item):
         if item in self.items:
             self.items.remove(item)
 
+    # Calculate the dimensions for the inventory
     def calculate_dimensions(self):
         height = max(len(self.items) * (self.font_size + self.padding), 50) + 40 
         return 200, height
 
+    # Draw the inventory on screen
     def draw(self, screen):
         if not self.visible:
             return
@@ -126,28 +134,29 @@ class Inventory:
 
         screen.blit(inventory_surface, (screen.get_width() - width - 20, 20))
 
+    # Handle input for the blender when selecting items
     def handle_input(self, event):
         if not self.visible:
             return
         if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_z:
-                self.selected_index = (self.selected_index + 1) % len(self.items)
-            if event.key == pygame.K_x:
+            if event.key == pygame.K_DOWN: # If down arrow was pressed
+                if len(self.items) == 0:
+                    return 
+                self.selected_index = (self.selected_index + 1) % len(self.items) # Change active inventory item
+            if event.key == pygame.K_UP:
+                if len(self.items) == 0:
+                    return 
+                self.selected_index = (self.selected_index - 1) % len(self.items) # Change active inventory item
+            if event.key == pygame.K_RETURN: # If Enter was pressed
+                # Check edge cases
                 if self.items:
                     selected_item = self.items[self.selected_index]
                     if selected_item in self.selected_items:
                         self.selected_items.remove(selected_item)
                     else:
-                        self.selected_items.add(selected_item)
+                        self.selected_items.add(selected_item) # Add the item to the selected ones
 
-                    print("Currently selected items:")
-                    for item in self.selected_items:
-                        print(f"- {item}")
-
-                    if len(self.selected_items) == 4:
-                        print("Three items selected:")
-                        for item in self.selected_items:
-                            print(f"- {item}")
+                    if len(self.selected_items) == 3:
                         self.selected_items.clear()
 
 """

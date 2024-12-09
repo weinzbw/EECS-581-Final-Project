@@ -148,6 +148,11 @@ def display_credits(screen):
     # Scroll the credits
     while y_offset > -len(credits) * 50:  # Ensure all text scrolls past the screen
         screen.fill((0, 0, 0))  # Clear the screen each frame
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
         for i, line in enumerate(credits):
             text = font.render(line, True, (255, 255, 255))  # White text
             text_rect = text.get_rect(center=(screen.get_width() // 2, y_offset + i * 50))
