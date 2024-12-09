@@ -4,6 +4,7 @@ Description: Helper file that controls win/loss conditions. 1 hour timer complet
 Programmer(s): Naran Bat
 Date Made: 11/05/2024
 Date(s) Revised:11/10/2024: Added timer display to show remaining time on screen.
+                12/07/2024: Added animations to win/fail screens. Created credits screen with animation.
 Preconditions: Must be initialized before calling any functions from this file
 Postconditions: Win and loss conditions are properly displayed. Countdown timer is displayed on the game screen, updating each second.
 Errors/Exceptions: None explicitly handled
