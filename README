@@ -1,1 +1,33 @@
+INCONVENIENT ESCAPE
+
+To play, you must be in the working directory of the repo and run the code using "python3 startscreen.py"
+
+You will be loaded into a start screen with the options "Start Game" and "Load Game"
+
+Starting a game will launch you in with a fresh savefile, so be careful if you already have a save!
+
+Selecting Load Game will read from savedata.txt to recreate the previous save. If the data in the file is messed with, it may cause errors
+
+
+Press I to open/close the inventory! Use arrow keys to navigate inventory and Enter to select an item to use
+
+Press ESC to open the pause menu! (Use arrow keys to select an option and Enter to choose)
+
+When using the blender, have your inventory open and use x to add/remove an item from the blender and z to swap which item you are adding/removing
+
+
+
+Let the rest of this README be a guide on getting through the game:
+
+1. Open the Computer to show a loading bar. This bar can only be increased by pressing the right arrow key. You will need to press it multiple times to advance
+2. Unlocking the computer shows a chess game, where you control a pawn which can move in any directions with the arrow keys. To pass, simple move the pawn over the black king to win
+3. After completing chess, going into the Right Room will show that the Dresser has been unlocked. You should collect the Extremely Tiny Crowbar
+4. Going back to the front room, you can use the Extremely Tiny Crowbar on the keyboard to receive a Keyboard Key
+5. You can click on the printer to grab the Uno Reverse Card
+6. Using the Uno Reverse Card on the fan sucks the carpet up and destroys it, revealing a Cellar underneath
+7. Opening the cellar by clicking on it presents you with a Thing. You can collect this Thing (2/2)
+8. Going back to the right room, you can use the Keyboard "Key" on the safe, opening it to reveal another Thing (1/2). Collect it
+9. Go into the back room. Opening your inventory with I and clicking on the blender allows you to add items to it
+10. Use the arrow keys to select items and change which items are selected for the blender. Add the Thing 1/2 and Thing 2/2.
+11. Enter the Portal
 
