@@ -237,7 +237,6 @@ def computer(game_state, savestate, computer_unlocked, chess_completed):
 # Main loop
 def front(game_state, savestate, inventory: Inventory):
     # load the sounds
-    pygame.mixer.Sound.set_volume(0.2)
     computer_sound = pygame.mixer.Sound("sounds/computer.mp3")
     printer_sound = pygame.mixer.Sound("sounds/printer.mp3")
 

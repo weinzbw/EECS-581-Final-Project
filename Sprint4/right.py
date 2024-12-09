@@ -30,7 +30,6 @@ import win_lose
 # Initialize Pygame if not already initialized
 pygame.init()
 pygame.mixer.init()
-pygame.mixer.Sound.set_volume(0.2)
 
 font = pygame.font.SysFont(None, 36)
 interaction_text = ""
