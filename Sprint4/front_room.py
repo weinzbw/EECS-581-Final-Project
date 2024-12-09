@@ -362,9 +362,7 @@ def front(game_state, savestate, inventory: Inventory):
                     if event.key == pygame.K_RETURN: # If Enter is pressed
                         inventory.handle_input(event) # Handle the input for inventory
                         if len(inventory.selected_items) > 1:
-                            print(inventory.selected_items)
                             inventory.selected_items = set()
-                            print(inventory.selected_items)
 
         # Check if interaction text should be cleared after 2 seconds
         if time.time() - interaction_time > 2:
